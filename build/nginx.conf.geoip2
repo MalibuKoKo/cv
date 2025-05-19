@@ -13,10 +13,19 @@ http {
         $geoip2_data_country_code country iso_code;
     }
 
+    map $geoip2_data_country_code $allowed_country {
+        default no;
+        FR no;
+    }
+
     server {
         listen 80;
         location / {
-            return 200 "Country: $geoip2_data_country_code\n";
+            if ($allowed_country = no) {
+                return 403;
+            }
+            root /usr/share/nginx/html;
+            index index.html;
         }
     }
 }
