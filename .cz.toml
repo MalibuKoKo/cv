@@ -4,5 +4,6 @@ tag_format = "$version"
 version = "1.0.0"
 update_changelog_on_bump = true
 version_files = [
-  "VERSION"
+  "VERSION",
+  "source/VERSION"
 ]
