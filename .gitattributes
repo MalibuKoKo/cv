@@ -3,4 +3,5 @@ infra/terraform.tfstate* filter=git-crypt diff=git-crypt
 source/index.html filter=git-crypt diff=git-crypt
 source/*.jpeg filter=git-crypt diff=git-crypt
 maxmind_token.txt filter=git-crypt diff=git-crypt
+maxmind_creds.txt filter=git-crypt diff=git-crypt
 hostctl.sh filter=git-crypt diff=git-crypt
