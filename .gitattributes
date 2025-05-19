@@ -1,0 +1,4 @@
+infra/terraform.tfvars filter=git-crypt diff=git-crypt
+infra/terraform.tfstate* filter=git-crypt diff=git-crypt
+source/index.html filter=git-crypt diff=git-crypt
+source/*.jpeg filter=git-crypt diff=git-crypt

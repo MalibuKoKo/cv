@@ -1,0 +1,121 @@
+{
+  "lockfile_version": "1",
+  "packages": {
+    "github:NixOS/nixpkgs/nixpkgs-unstable": {
+      "last_modified": "2025-04-23T03:04:08Z",
+      "resolved": "github:NixOS/nixpkgs/507b63021ada5fee621b6ca371c4fca9ca46f52c?lastModified=1745377448&narHash=sha256-jhZDfXVKdD7TSEGgzFJQvEEZ2K65UMiqW5YJ2aIqxMA%3D"
+    },
+    "oci-cli@latest": {
+      "last_modified": "2025-05-12T14:38:58Z",
+      "resolved": "github:NixOS/nixpkgs/eaeed9530c76ce5f1d2d8232e08bec5e26f18ec1#oci-cli",
+      "source": "devbox-search",
+      "version": "3.54.4",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/z3yh1jjxjam2fy68j4ya2s996dmbivds-oci-cli-3.54.4",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/55xnsqddv91vdgfzqs35b069rry1s1wh-oci-cli-3.54.4-dist"
+            }
+          ],
+          "store_path": "/nix/store/z3yh1jjxjam2fy68j4ya2s996dmbivds-oci-cli-3.54.4"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/91mcvfy81jlrxd5nf2d5f7r4bi8h96ka-oci-cli-3.54.4",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/rwphm9m6q4gvwcr8ds63w46gbdvarjac-oci-cli-3.54.4-dist"
+            }
+          ],
+          "store_path": "/nix/store/91mcvfy81jlrxd5nf2d5f7r4bi8h96ka-oci-cli-3.54.4"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/rf9gfydwlf5077x2ykl51hln6hppfdf6-oci-cli-3.54.4",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/0pk1pg2s4vp4xnx32rxgmwnr1kbnl5p1-oci-cli-3.54.4-dist"
+            }
+          ],
+          "store_path": "/nix/store/rf9gfydwlf5077x2ykl51hln6hppfdf6-oci-cli-3.54.4"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/151n7fxcrhmsqjj7cf610d759484rwsb-oci-cli-3.54.4",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/8z1m5ss6k75bpa97fmypypxpwzfm35p6-oci-cli-3.54.4-dist"
+            }
+          ],
+          "store_path": "/nix/store/151n7fxcrhmsqjj7cf610d759484rwsb-oci-cli-3.54.4"
+        }
+      }
+    },
+    "terraform@1.11.4": {
+      "last_modified": "2025-05-06T08:06:31Z",
+      "resolved": "github:NixOS/nixpkgs/1cb1c02a6b1b7cf67e3d7731cbbf327a53da9679#terraform",
+      "source": "devbox-search",
+      "version": "1.11.4",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/aq5vp53p4xn99yq43k8s5jcfkkbi7aqr-terraform-1.11.4",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/aq5vp53p4xn99yq43k8s5jcfkkbi7aqr-terraform-1.11.4"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/86bvwkdd872kpfhs0aar93icbbcicq9s-terraform-1.11.4",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/86bvwkdd872kpfhs0aar93icbbcicq9s-terraform-1.11.4"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/xksc5sl9gpj2zaxyk7jr06j5rfkkv8w9-terraform-1.11.4",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/xksc5sl9gpj2zaxyk7jr06j5rfkkv8w9-terraform-1.11.4"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/ngq7g491c89m02lwv1rjcdvr9nbj7x1z-terraform-1.11.4",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/ngq7g491c89m02lwv1rjcdvr9nbj7x1z-terraform-1.11.4"
+        }
+      }
+    }
+  }
+}
