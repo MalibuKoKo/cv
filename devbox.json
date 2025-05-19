@@ -14,6 +14,12 @@
       ],
       "build": [
         "docker build -t ghcr.io/malibukoko/cv:latest -f build/Dockerfile ."
+      ],
+      "docker-login-ghcr": [
+        "echo $GHCR_PAT | docker login ghcr.io -u malibukoko --password-stdin"
+      ],
+      "docker-push-ghcr": [
+        "docker push ghcr.io/malibukoko/cv:latest"
       ]
     }
   }

@@ -127,7 +127,7 @@ module "ecs_service" {
     (local.container_name) = {
       name = local.container_name
       essential = true
-      image     = "public.ecr.aws/nginx/nginx:1.28"
+      image     = var.image
       port_mappings = [
         {
           name          = local.container_name
