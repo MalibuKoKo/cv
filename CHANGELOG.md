@@ -1,3 +1,10 @@
+## 1.2.2 (2025-05-20)
+
+### Refactor
+
+- change nginx geoip2 config
+- use geoip2
+
 ## 1.2.1 (2025-05-20)
 
 ### Refactor
