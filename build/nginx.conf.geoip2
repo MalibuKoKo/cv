@@ -13,16 +13,38 @@ http {
         $geoip2_data_country_code country iso_code;
     }
 
-    map $geoip2_data_country_code $allowed_country {
-        default no;
-        FR no;
+    # map $geoip2_data_country_code $allowed_country {
+    #     default no;
+    #     FR no;
+    # }
+
+    map $geoip2_data_country_code $blocked_country {
+        default 0;
+        EG 1;
+        VE 1;
+        CN 1;
+        BY 1;
+        HK 1;
+        SY 1;
+        KP 1;
+        PK 1;
+        TH 1;
+        BR 1;
+        NG 1;
+        TR 1;
+        UA 1;
+        ID 1;
+        RU 1;
+        CU 1;
+        IR 1;
+        VN 1;
     }
 
     server {
         listen 80;
         location / {
-            if ($allowed_country = no) {
-                return 403;
+            if ($blocked_country) {
+              return 403;
             }
             root /usr/share/nginx/html;
             index index.html;

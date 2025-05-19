@@ -129,6 +129,7 @@ module "ecs_service" {
       name = local.container_name
       essential = true
       image     = "${var.image}:${file("${path.module}/../VERSION")}-geoip2"
+      # image     = "${var.image}:${file("${path.module}/../VERSION")}"
       port_mappings = [
         {
           name          = local.container_name
