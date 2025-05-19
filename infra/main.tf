@@ -138,6 +138,67 @@ module "ecs_service" {
       ]
       readonly_root_filesystem = false
       # enable_cloudwatch_logging = false
+      environment = [
+        {
+          name  = "MAXMIND_TOKEN",
+          value = var.maxmind_token
+        }
+      ]
+      command   = [
+        "sh", "-c",
+        <<-EOT
+          set -x
+          curl -L "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country&license_key=$${MAXMIND_TOKEN}&suffix=mmdb" -o /etc/nginx/GeoLite2-Country.mmdb
+
+          cat > /etc/nginx/nginx.conf <<EOF
+          load_module modules/ngx_http_geoip2_module.so;
+
+          events {}
+
+          http {
+            geoip2 /etc/nginx/GeoLite2-Country.mmdb {
+              $geoip2_data_country_code source=$remote_addr country iso_code;
+            }
+
+            map $geoip2_data_country_code $blocked_country {
+              default 0;
+              EG 1;
+              VE 1;
+              CN 1;
+              BY 1;
+              HK 1;
+              SY 1;
+              KP 1;
+              PK 1;
+              TH 1;
+              BR 1;
+              NG 1;
+              TR 1;
+              UA 1;
+              ID 1;
+              RU 1;
+              CU 1;
+              IR 1;
+              VN 1;
+            }
+
+            server {
+              listen 80;
+
+              if ($blocked_country) {
+                return 403;
+              }
+
+              location / {
+                root /usr/share/nginx/html;
+                index index.html;
+              }
+            }
+          }
+          EOF
+          nginx -g 'daemon off;'
+        EOT
+      ]
     }
     dns-updater = {
       name = "dns-updater"
