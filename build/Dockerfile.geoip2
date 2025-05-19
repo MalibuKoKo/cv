@@ -45,3 +45,4 @@ RUN apt-get update \
 
 COPY build/nginx.conf.geoip2 /etc/nginx/nginx.conf
 COPY source/* /usr/share/nginx/html/
+# https://hub.docker.com/r/maxmindinc/geoipupdate
