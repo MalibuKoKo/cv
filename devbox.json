@@ -24,7 +24,7 @@
       ],
       "tfstate": [
         "git add infra/terraform.tfstate*",
-        "cz commit -m \"chore: mise à jour du fichiers terraform.tfstate*\""
+        "git commit -m \"chore: mise à jour du fichiers terraform.tfstate*\""
       ],
       "bump": [
         "git pull",
