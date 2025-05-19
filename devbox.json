@@ -22,6 +22,10 @@
         "docker build --secret id=maxmind_token,src=maxmind_token.txt -t ghcr.io/malibukoko/cv:${DOCKER_TAG} -f build/Dockerfile .",
         "docker push ghcr.io/malibukoko/cv:${DOCKER_TAG}"
       ],
+      "tfstate": [
+        "git add infra/terraform.tfstate*",
+        "cz commit -m \"chore: mise à jour du fichiers terraform.tfstate*\""
+      ],
       "bump": [
         "git pull",
         "git fetch --all --tags",
