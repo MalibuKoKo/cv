@@ -13,13 +13,13 @@
         "echo \"Error: no test specified\" && exit 1"
       ],
       "build": [
-        "docker build -t ghcr.io/malibukoko/cv:latest -f build/Dockerfile ."
+        "docker build --secret id=maxmind_token,src=maxmind_token.txt -t ghcr.io/malibukoko/cv:$(gum input --placeholder version) -f build/Dockerfile ."
       ],
-      "docker-login-ghcr": [
+      "login": [
         "echo $GHCR_PAT | docker login ghcr.io -u malibukoko --password-stdin"
       ],
-      "docker-push-ghcr": [
-        "docker push ghcr.io/malibukoko/cv:latest"
+      "push": [
+        "docker push ghcr.io/malibukoko/cv:$(gum input --placeholder version)"
       ]
     }
   }

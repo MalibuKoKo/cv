@@ -10,6 +10,7 @@ locals {
 
   container_name = "nginx"
   container_port = 80
+  host_port = 80
   domain_name = var.domain_name
 
   tags = {
@@ -107,7 +108,7 @@ module "ecs_service" {
   security_group_rules = {
     http_in = {
       type                     = "ingress"
-      from_port                = local.container_port
+      from_port                = local.host_port
       to_port                  = local.container_port
       protocol                 = "tcp"
       cidr_blocks              = ["0.0.0.0/0"]
@@ -132,73 +133,98 @@ module "ecs_service" {
         {
           name          = local.container_name
           containerPort = local.container_port
-          hostPort      = local.container_port
+          hostPort      = local.host_port
           protocol      = "tcp"
         }
       ]
       readonly_root_filesystem = false
       # enable_cloudwatch_logging = false
-      environment = [
-        {
-          name  = "MAXMIND_TOKEN",
-          value = var.maxmind_token
-        }
-      ]
-      command   = [
-        "sh", "-c",
-        <<-EOT
-          set -x
-          curl -L "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country&license_key=$${MAXMIND_TOKEN}&suffix=mmdb" -o /etc/nginx/GeoLite2-Country.mmdb
+      # environment = [
+      #   {
+      #     name  = "MAXMIND_TOKEN",
+      #     value = var.maxmind_token
+      #   }
+      # ]
+      # command   = [
+      #   "sh", "-c",
+      #   <<-EOT
+      #     set -x
+      #     curl -L "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country&license_key=$${MAXMIND_TOKEN}&suffix=mmdb" -o /etc/nginx/GeoLite2-Country.mmdb
 
-          cat > /etc/nginx/nginx.conf <<EOF
-          load_module modules/ngx_http_geoip2_module.so;
+      #     cat > /etc/nginx/nginx.conf <<EOF
+      #     load_module modules/ngx_http_geoip2_module.so;
 
-          events {}
+      #     user  nginx;
+      #     worker_processes  auto;
 
-          http {
-            geoip2 /etc/nginx/GeoLite2-Country.mmdb {
-              $geoip2_data_country_code source=$remote_addr country iso_code;
-            }
+      #     error_log  /var/log/nginx/error.log notice;
+      #     pid        /run/nginx.pid;
 
-            map $geoip2_data_country_code $blocked_country {
-              default 0;
-              EG 1;
-              VE 1;
-              CN 1;
-              BY 1;
-              HK 1;
-              SY 1;
-              KP 1;
-              PK 1;
-              TH 1;
-              BR 1;
-              NG 1;
-              TR 1;
-              UA 1;
-              ID 1;
-              RU 1;
-              CU 1;
-              IR 1;
-              VN 1;
-            }
+      #     http {
+      #       include       /etc/nginx/mime.types;
+      #       default_type  application/octet-stream;
 
-            server {
-              listen 80;
+      #       log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+      #                         '$status $body_bytes_sent "$http_referer" '
+      #                         '"$http_user_agent" "$http_x_forwarded_for"';
 
-              if ($blocked_country) {
-                return 403;
-              }
+      #       access_log  /var/log/nginx/access.log  main;
 
-              location / {
-                root /usr/share/nginx/html;
-                index index.html;
-              }
-            }
-          }
-          EOF
-          nginx -g 'daemon off;'
-        EOT
-      ]
+      #       sendfile        on;
+      #       #tcp_nopush     on;
+
+      #       keepalive_timeout  65;
+
+      #       #gzip  on;
+
+      #       include /etc/nginx/conf.d/*.conf;
+
+      #       # Config GEOIP2
+      #       geoip2 /etc/nginx/GeoLite2-Country.mmdb {
+      #         $geoip2_data_country_code source=$remote_addr country iso_code;
+      #       }
+
+      #       map $geoip2_data_country_code $blocked_country {
+      #         default 0;
+      #         EG 1;
+      #         VE 1;
+      #         CN 1;
+      #         BY 1;
+      #         HK 1;
+      #         SY 1;
+      #         KP 1;
+      #         PK 1;
+      #         TH 1;
+      #         BR 1;
+      #         NG 1;
+      #         TR 1;
+      #         UA 1;
+      #         ID 1;
+      #         RU 1;
+      #         CU 1;
+      #         IR 1;
+      #         VN 1;
+      #       }
+
+      #       server {
+      #         listen ${local.container_port} default_server;
+      #         server_name ${var.dns_record_a}.${var.domain_name};
+
+      #         if ($blocked_country) {
+      #           return 403;
+      #         }
+
+      #         location / {
+      #           root /usr/share/nginx/html;
+      #           index index.html;
+      #         }
+      #       }
+      #       include /etc/nginx/conf.d/*.conf;
+      #     }
+      #     EOF
+      #     nginx -g 'daemon off;'
+      #   EOT
+      # ]
     }
     dns-updater = {
       name = "dns-updater"
