@@ -2,7 +2,11 @@
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.14.2/.schema/devbox.schema.json",
   "packages": [
     "oci-cli@latest",
-    "terraform@1.11.4"
+    "terraform@1.11.4",
+    "hostctl@1.1.4",
+    "jq@1.7.1",
+    "aws-vault@7.2.0",
+    "awscli2@2.25.5"
   ],
   "shell": {
     "init_hook": [
@@ -13,12 +17,38 @@
         "echo \"Error: no test specified\" && exit 1"
       ],
       "build": [
-        "export DOCKER_TAG=$(gum input --placeholder version)",
+        "echo $GHCR_PAT | docker login ghcr.io -u malibukoko --password-stdin",
+        "export DOCKER_TAG=$(cat VERSION)",
         "docker build --secret id=maxmind_token,src=maxmind_token.txt -t ghcr.io/malibukoko/cv:${DOCKER_TAG} -f build/Dockerfile .",
         "docker push ghcr.io/malibukoko/cv:${DOCKER_TAG}"
       ],
-      "login": [
-        "echo $GHCR_PAT | docker login ghcr.io -u malibukoko --password-stdin"
+      "bump": [
+        "git pull",
+        "git fetch --all --tags",
+        "cz bump --changelog",
+        "git push origin $(git tag --sort v:refname | cat | tail -n 1)",
+        "git push origin"
+      ],
+      "bump_patch": [
+        "git pull",
+        "git fetch --all --tags",
+        "cz bump --changelog --increment PATCH",
+        "git push origin $(git tag --sort v:refname | cat | tail -n 1)",
+        "git push origin"
+      ],
+      "bump_minor": [
+        "git pull",
+        "git fetch --all --tags",
+        "cz bump --changelog --increment MINOR",
+        "git push origin $(git tag --sort v:refname | cat | tail -n 1)",
+        "git push origin"
+      ],
+      "bump_major": [
+        "git pull",
+        "git fetch --all --tags",
+        "cz bump --changelog --increment MAJOR",
+        "git push origin $(git tag --sort v:refname | cat | tail -n 1)",
+        "git push origin"
       ]
     }
   }
