@@ -13,11 +13,6 @@ http {
         $geoip2_data_country_code country iso_code;
     }
 
-    # map $geoip2_data_country_code $allowed_country {
-    #     default no;
-    #     FR no;
-    # }
-
     map $geoip2_data_country_code $blocked_country {
         default 0;
         EG 1;

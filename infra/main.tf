@@ -6,7 +6,8 @@ locals {
   name   = "free-tier"
 
   vpc_cidr = "10.0.0.0/16"
-  azs      = slice(data.aws_availability_zones.available.names, 0, 3)
+  # azs      = slice(data.aws_availability_zones.available.names, 0, 3)
+  azs      = [data.aws_availability_zones.available.names[0]]
 
   container_name = "nginx"
   container_port = 80
@@ -103,6 +104,8 @@ module "ecs_service" {
   assign_public_ip   = true
   launch_type = "FARGATE"
   desired_count = 1
+  deployment_maximum_percent         = 100
+  deployment_minimum_healthy_percent = 0
   capacity_provider_strategy = [{capacity_provider = "FARGATE_SPOT", weight = 1, base = 0}]
   subnet_ids = module.vpc.public_subnets
   security_group_rules = {
@@ -123,7 +126,7 @@ module "ecs_service" {
     }
   }  
 
-  enable_execute_command = true
+  enable_execute_command = false
   container_definitions = {
     (local.container_name) = {
       name = local.container_name
