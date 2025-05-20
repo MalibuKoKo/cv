@@ -46,3 +46,16 @@ RUN apt-get update \
 COPY build/nginx.conf.geoip2 /etc/nginx/nginx.conf
 COPY source/* /usr/share/nginx/html/
 # https://hub.docker.com/r/maxmindinc/geoipupdate
+
+RUN sed -i '/^exec "\$@"/i \
+entrypoint_log "$0: Fetching SSL certificates from AWS SSM" && \
+aws ssm get-parameter --name /nginx/cert --with-decryption --query Parameter.Value --output text > /etc/ssl/certs/fullchain.pem && \
+aws ssm get-parameter --name /nginx/key --with-decryption --query Parameter.Value --output text > /etc/ssl/private/privkey.pem && \
+chmod 600 /etc/ssl/private/privkey.pem' /docker-entrypoint.sh
+
+# Copier awscli depuis l'image builder
+COPY --from=awscli /usr/local/aws-cli /usr/local/aws-cli
+COPY --from=awscli /usr/local/bin/aws /usr/local/bin/aws
+
+# Assurer que /usr/local/bin est dans le PATH
+ENV PATH="/usr/local/aws-cli/v2/current/bin:${PATH}"
