@@ -50,7 +50,7 @@ COPY source/* /usr/share/nginx/html/
 RUN sed -i '/^exec "\$@"/i \
 entrypoint_log "$0: Fetching SSL certificates from AWS SSM" && \
 aws ssm get-parameter --name /nginx/cert --with-decryption --query Parameter.Value --output text > /etc/ssl/certs/fullchain.pem && \
-aws ssm get-parameter --name /nginx/key --with-decryption --query Parameter.Value --output text > /etc/ssl/private/privkey.pem && \
+aws ssm get-parameter --name /nginx/key  --with-decryption --query Parameter.Value --output text > /etc/ssl/private/privkey.pem && \
 chmod 600 /etc/ssl/private/privkey.pem' /docker-entrypoint.sh
 
 # Copier awscli depuis l'image builder
