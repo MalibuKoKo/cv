@@ -277,4 +277,83 @@ module "ecs_service" {
   # ephemeral_storage = {
   #   size_in_gib = 1 # range (21 - 200)
   # }
+  create_tasks_iam_role = false
+  tasks_iam_role_arn = aws_iam_role.ecs_task.arn
+}
+
+resource "aws_ssm_parameter" "cert" {
+  provider  = aws.freetier
+  name        = "/${local.container_name}/cert"
+  type        = "SecureString"  # chiffrement KMS automatique géré par AWS
+  description = "Certificat SSL pour ${local.container_name}"
+  value       = file("certs/archive/${var.dns_record_a}.${var.domain_name}/fullchain1.pem")  # chemin vers ton certificat local
+  tags        = local.tags
+}
+
+resource "aws_ssm_parameter" "key" {
+  provider    = aws.freetier
+  name        = "/${local.container_name}/key"
+  type        = "SecureString"
+  description = "Clé privée SSL pour ${local.container_name}"
+  value       = file("certs/archive/${var.dns_record_a}.${var.domain_name}/privkey1.pem")  # chemin vers ta clé privée locale
+  tags        = local.tags
+}
+
+resource "aws_iam_role" "ecs_task" {
+  provider    = aws.freetier
+  name = "ecs-task-role-myservice"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Condition = {
+          ArnLike = {
+            "aws:SourceArn" = "arn:aws:ecs:${local.region}:${data.aws_caller_identity.current.account_id}:*"
+          }
+          StringEquals = {
+             "aws:SourceAccount" = "${data.aws_caller_identity.current.account_id}"
+          }
+        }
+        Effect = "Allow"
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        }
+        Sid       = "ECSTasksAssumeRole"
+      }
+    ]
+  })
+}
+
+data "aws_caller_identity" "current" {
+  provider    = aws.freetier
+}
+
+resource "aws_iam_policy" "ecs_task_ssm_policy" {
+  provider    = aws.freetier
+  name = "ecs-task-ssm-access"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ssm:GetParameter",
+          "ssm:GetParameters"
+        ]
+        Resource = [
+          "arn:aws:ssm:${local.region}:${data.aws_caller_identity.current.account_id}:parameter/${local.container_name}/cert",
+          "arn:aws:ssm:${local.region}:${data.aws_caller_identity.current.account_id}:parameter/${local.container_name}/key"
+        ]
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_ssm_attach" {
+  provider    = aws.freetier
+  role       = aws_iam_role.ecs_task.name
+  policy_arn = aws_iam_policy.ecs_task_ssm_policy.arn
 }
