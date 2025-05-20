@@ -113,6 +113,70 @@
         }
       }
     },
+    "git-filter-repo@2.45.0": {
+      "last_modified": "2024-12-03T12:40:06Z",
+      "resolved": "github:NixOS/nixpkgs/566e53c2ad750c84f6d31f9ccb9d00f823165550#git-filter-repo",
+      "source": "devbox-search",
+      "version": "2.45.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/9yz90g4z2dr2x8m24n26zqbski7j3ml6-python3.12-git-filter-repo-2.45.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/jmhs62wg61j5jry8x1zcrk56w4bg37jr-python3.12-git-filter-repo-2.45.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/9yz90g4z2dr2x8m24n26zqbski7j3ml6-python3.12-git-filter-repo-2.45.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/kvlhvdck857nvhz4an6ss1znxmrwlf7y-python3.12-git-filter-repo-2.45.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/4b7nn4n92kcmx490pm99rylxfafw30cj-python3.12-git-filter-repo-2.45.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/kvlhvdck857nvhz4an6ss1znxmrwlf7y-python3.12-git-filter-repo-2.45.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/1pm6nypba6d8s7z592pyihkk1qj7nw1n-python3.12-git-filter-repo-2.45.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/zwkvy7fj3yj8q3gfqar0s7l0adzqb39c-python3.12-git-filter-repo-2.45.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/1pm6nypba6d8s7z592pyihkk1qj7nw1n-python3.12-git-filter-repo-2.45.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/lr4s7cyn7mfplfyg4l6y5y37isr7avl8-python3.12-git-filter-repo-2.45.0",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/6xbw99vhsranli0zpsp6ddg1r4px6yzk-python3.12-git-filter-repo-2.45.0-dist"
+            }
+          ],
+          "store_path": "/nix/store/lr4s7cyn7mfplfyg4l6y5y37isr7avl8-python3.12-git-filter-repo-2.45.0"
+        }
+      }
+    },
     "github:NixOS/nixpkgs/nixpkgs-unstable": {
       "last_modified": "2025-04-23T03:04:08Z",
       "resolved": "github:NixOS/nixpkgs/507b63021ada5fee621b6ca371c4fca9ca46f52c?lastModified=1745377448&narHash=sha256-jhZDfXVKdD7TSEGgzFJQvEEZ2K65UMiqW5YJ2aIqxMA%3D"

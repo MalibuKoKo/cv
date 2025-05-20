@@ -6,7 +6,8 @@
     "hostctl@1.1.4",
     "jq@1.7.1",
     "aws-vault@7.2.0",
-    "awscli2@2.25.5"
+    "awscli2@2.25.5",
+    "git-filter-repo@2.45.0"
   ],
   "shell": {
     "init_hook": [
