@@ -16,6 +16,14 @@
       "test": [
         "echo \"Error: no test specified\" && exit 1"
       ],
+      "certbot": [
+        "docker rm -f certbot-curl-base",
+        "docker run -it --name certbot-curl-base --entrypoint=sh certbot/certbot -c 'apk add --no-cache curl'",
+        "docker commit certbot-curl-base my-certbot-with-curl",
+        "domain=$(grep -Po 'dns_record_a\\s+=\\s+\"\\K([^\"]+)' infra/terraform.tfvars).$(grep -Po 'domain_name\\s+=\\s+\"\\K([^\"]+)' infra/terraform.tfvars)",
+        "email=$(grep -Po 'email\\s+=\\s+\"\\K([^\"]+)' infra/terraform.tfvars)",
+        "docker run -it --rm -e HOSTINGER_TOKEN=${HOSTINGER_TOKEN} --entrypoint=certbot --volume ./infra/certs:/tmp/config/letsencrypt --volume $(pwd)/create-dns-txt.sh:/sbin/create-dns-txt.sh --user $(id -u):$(id -g) docker.io/library/my-certbot-with-curl:latest certonly --manual-auth-hook /sbin/create-dns-txt.sh --manual --preferred-challenges=dns --no-eff-email --agree-tos -m $email -d $domain --config-dir /tmp/config/letsencrypt --work-dir /tmp/work/letsencrypt --logs-dir /tmp/log/letsencrypt"
+      ],
       "build": [
         "echo $GHCR_PAT | docker login ghcr.io -u malibukoko --password-stdin",
         "docker buildx use cv||docker buildx create --name cv --use",
