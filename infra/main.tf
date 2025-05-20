@@ -262,7 +262,8 @@ module "ecs_service" {
           echo "NGINX est prêt. Mise à jour DNS...";
           PUBLIC_IP=$(curl -s https://checkip.amazonaws.com);
           set -x;
-          curl -s https://developers.hostinger.com/api/dns/v1/zones/$${DOMAIN_NAME} --request PUT --header 'Content-Type: application/json' --header "Authorization: Bearer $${HOSTINGER_TOKEN}" --data "{\"overwrite\":true,\"zone\":[{\"name\":\"$${DNS_RECORD_A}\",\"records\":[{\"content\":\"$${PUBLIC_IP}\"}],\"ttl\": 300,\"type\":\"A\"}]}";
+          curl -s https://developers.hostinger.com/api/dns/v1/zones/$${DOMAIN_NAME} --request PUT --header 'Content-Type: application/json' --header "Authorization: Bearer $${HOSTINGER_TOKEN}" --data "{\"overwrite\":true,\"zone\":[{\"name\":\"$${DNS_RECORD_A}\",\"records\":[{\"content\":\"$${PUBLIC_IP}\"}],\"ttl\": 60,\"type\":\"A\"}]}";
+          curl -s https://developers.hostinger.com/api/dns/v1/zones/$${DOMAIN_NAME} --request PUT --header 'Content-Type: application/json' --header "Authorization: Bearer $${HOSTINGER_TOKEN}" --data "{\"overwrite\":true,\"zone\":[{\"name\":\"@\",\"records\":[{\"content\":\"$${PUBLIC_IP}\"}],\"ttl\": 60,\"type\":\"A\"}]}";
         EOT
       ]
     }
