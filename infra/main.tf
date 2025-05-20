@@ -142,7 +142,7 @@ module "ecs_service" {
         }
       ]
       readonly_root_filesystem = false
-      # enable_cloudwatch_logging = false
+      enable_cloudwatch_logging = false
       # environment = [
       #   {
       #     name  = "MAXMIND_TOKEN",
@@ -267,4 +267,13 @@ module "ecs_service" {
       ]
     }
   }
+
+  runtime_platform = {
+    cpu_architecture        = "ARM64"
+    operating_system_family = "LINUX"
+  }
+
+  # ephemeral_storage = {
+  #   size_in_gib = 1 # range (21 - 200)
+  # }
 }
