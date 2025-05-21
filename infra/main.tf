@@ -53,14 +53,14 @@ module "vpc" {
   cidr = local.vpc_cidr
 
   azs             = local.azs
-  private_subnets = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 4, k)]
+  # private_subnets = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 4, k)]
   public_subnets  = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 48)]
 
   enable_nat_gateway = false
   single_nat_gateway = false
 
-  enable_dns_hostnames = true
-  enable_dns_support   = true
+  # enable_dns_hostnames = true
+  # enable_dns_support   = true
 }
 
 
@@ -85,35 +85,35 @@ resource "aws_security_group" "vpc_endpoints" {
   }
 }
 
-resource "aws_vpc_endpoint" "ssm" {
-  provider          = aws.freetier
-  vpc_id            = module.vpc.vpc_id
-  service_name      = "com.amazonaws.${local.region}.ssm"
-  vpc_endpoint_type = "Interface"
-  subnet_ids        = module.vpc.public_subnets
-  security_group_ids = [aws_security_group.vpc_endpoints.id]
-  private_dns_enabled = true
-}
+# resource "aws_vpc_endpoint" "ssm" {
+#   provider          = aws.freetier
+#   vpc_id            = module.vpc.vpc_id
+#   service_name      = "com.amazonaws.${local.region}.ssm"
+#   vpc_endpoint_type = "Interface"
+#   subnet_ids        = module.vpc.public_subnets
+#   security_group_ids = [aws_security_group.vpc_endpoints.id]
+#   private_dns_enabled = true
+# }
 
-resource "aws_vpc_endpoint" "ssmmessages" {
-  provider          = aws.freetier
-  vpc_id            = module.vpc.vpc_id
-  service_name      = "com.amazonaws.${local.region}.ssmmessages"
-  vpc_endpoint_type = "Interface"
-  subnet_ids        = module.vpc.public_subnets
-  security_group_ids = [aws_security_group.vpc_endpoints.id]
-  private_dns_enabled = true
-}
+# resource "aws_vpc_endpoint" "ssmmessages" {
+#   provider          = aws.freetier
+#   vpc_id            = module.vpc.vpc_id
+#   service_name      = "com.amazonaws.${local.region}.ssmmessages"
+#   vpc_endpoint_type = "Interface"
+#   subnet_ids        = module.vpc.public_subnets
+#   security_group_ids = [aws_security_group.vpc_endpoints.id]
+#   private_dns_enabled = true
+# }
 
-resource "aws_vpc_endpoint" "ec2messages" {
-  provider          = aws.freetier
-  vpc_id            = module.vpc.vpc_id
-  service_name      = "com.amazonaws.${local.region}.ec2messages"
-  vpc_endpoint_type = "Interface"
-  subnet_ids        = module.vpc.public_subnets
-  security_group_ids = [aws_security_group.vpc_endpoints.id]
-  private_dns_enabled = true
-}
+# resource "aws_vpc_endpoint" "ec2messages" {
+#   provider          = aws.freetier
+#   vpc_id            = module.vpc.vpc_id
+#   service_name      = "com.amazonaws.${local.region}.ec2messages"
+#   vpc_endpoint_type = "Interface"
+#   subnet_ids        = module.vpc.public_subnets
+#   security_group_ids = [aws_security_group.vpc_endpoints.id]
+#   private_dns_enabled = true
+# }
 
 ################################################################################
 # ECS Cluster
@@ -189,7 +189,7 @@ module "ecs_service" {
     }
   }  
 
-  enable_execute_command = true
+  enable_execute_command = false #true
   container_definitions = {
     (local.container_name) = {
       name = local.container_name
@@ -211,98 +211,13 @@ module "ecs_service" {
         }
       ]
       readonly_root_filesystem = false
-      enable_cloudwatch_logging = true
-      # environment = [
-      #   {
-      #     name  = "MAXMIND_TOKEN",
-      #     value = var.maxmind_token
-      #   }
-      # ]
-      # command   = [
-      #   "sh", "-c",
-      #   <<-EOT
-      #     set -x
-      #     curl -L "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country&license_key=$${MAXMIND_TOKEN}&suffix=mmdb" -o /etc/nginx/GeoLite2-Country.mmdb
-
-      #     cat > /etc/nginx/nginx.conf <<EOF
-      #     load_module modules/ngx_http_geoip2_module.so;
-
-      #     user  nginx;
-      #     worker_processes  auto;
-
-      #     error_log  /var/log/nginx/error.log notice;
-      #     pid        /run/nginx.pid;
-
-      #     http {
-      #       include       /etc/nginx/mime.types;
-      #       default_type  application/octet-stream;
-
-      #       log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
-      #                         '$status $body_bytes_sent "$http_referer" '
-      #                         '"$http_user_agent" "$http_x_forwarded_for"';
-
-      #       access_log  /var/log/nginx/access.log  main;
-
-      #       sendfile        on;
-      #       #tcp_nopush     on;
-
-      #       keepalive_timeout  65;
-
-      #       #gzip  on;
-
-      #       include /etc/nginx/conf.d/*.conf;
-
-      #       # Config GEOIP2
-      #       geoip2 /etc/nginx/GeoLite2-Country.mmdb {
-      #         $geoip2_data_country_code source=$remote_addr country iso_code;
-      #       }
-
-      #       map $geoip2_data_country_code $blocked_country {
-      #         default 0;
-      #         EG 1;
-      #         VE 1;
-      #         CN 1;
-      #         BY 1;
-      #         HK 1;
-      #         SY 1;
-      #         KP 1;
-      #         PK 1;
-      #         TH 1;
-      #         BR 1;
-      #         NG 1;
-      #         TR 1;
-      #         UA 1;
-      #         ID 1;
-      #         RU 1;
-      #         CU 1;
-      #         IR 1;
-      #         VN 1;
-      #       }
-
-      #       server {
-      #         listen ${local.container_port} default_server;
-      #         server_name ${var.dns_record_a}.${var.domain_name};
-
-      #         if ($blocked_country) {
-      #           return 403;
-      #         }
-
-      #         location / {
-      #           root /usr/share/nginx/html;
-      #           index index.html;
-      #         }
-      #       }
-      #       include /etc/nginx/conf.d/*.conf;
-      #     }
-      #     EOF
-      #     nginx -g 'daemon off;'
-      #   EOT
-      # ]
+      enable_cloudwatch_logging = false
     }
     dns-updater = {
       name = "dns-updater"
       essential = false
-      image     = "docker.io/curlimages/curl:latest" # "public.ecr.aws/taskusinc/mirrors/curlimages/curl:latest"
+      image     = "docker.io/curlimages/curl:latest"
+      enable_cloudwatch_logging = false
       dependencies = [{
         containerName = local.container_name
         condition     = "START"
@@ -332,7 +247,6 @@ module "ecs_service" {
           PUBLIC_IP=$(curl -s https://checkip.amazonaws.com);
           set -x;
           curl -s https://developers.hostinger.com/api/dns/v1/zones/$${DOMAIN_NAME} --request PUT --header 'Content-Type: application/json' --header "Authorization: Bearer $${HOSTINGER_TOKEN}" --data "{\"overwrite\":true,\"zone\":[{\"name\":\"$${DNS_RECORD_A}\",\"records\":[{\"content\":\"$${PUBLIC_IP}\"}],\"ttl\": 60,\"type\":\"A\"}]}";
-          curl -s https://developers.hostinger.com/api/dns/v1/zones/$${DOMAIN_NAME} --request PUT --header 'Content-Type: application/json' --header "Authorization: Bearer $${HOSTINGER_TOKEN}" --data "{\"overwrite\":true,\"zone\":[{\"name\":\"@\",\"records\":[{\"content\":\"$${PUBLIC_IP}\"}],\"ttl\": 60,\"type\":\"A\"}]}";
         EOT
       ]
     }
@@ -403,6 +317,36 @@ resource "aws_iam_policy" "ecs_task_ssm_policy" {
   provider    = aws.freetier
   name = "ecs-task-ssm-access"
 
+  # policy = jsonencode({
+  #   Version = "2012-10-17"
+  #   Statement = [
+  #     {
+  #       Effect = "Allow"
+  #       Action = [
+  #         "ssm:GetParameter",
+  #         "ssm:GetParameters"
+  #       ]
+  #       Resource = [
+  #         "arn:aws:ssm:${local.region}:${data.aws_caller_identity.current.account_id}:parameter/${local.container_name}/cert",
+  #         "arn:aws:ssm:${local.region}:${data.aws_caller_identity.current.account_id}:parameter/${local.container_name}/key"
+  #       ]
+  #     },
+  #     {
+  #       Effect = "Allow"
+  #       Action = [
+  #         "ssm:StartSession",
+  #         "ssm:SendCommand",
+  #         "ssm:DescribeSessions",
+  #         "ssm:GetConnectionStatus",
+  #         "ssmmessages:CreateControlChannel",
+  #         "ssmmessages:CreateDataChannel",
+  #         "ssmmessages:OpenControlChannel",
+  #         "ssmmessages:OpenDataChannel"
+  #       ]
+  #       Resource = "*"
+  #     }
+  #   ]
+  # })
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -416,20 +360,6 @@ resource "aws_iam_policy" "ecs_task_ssm_policy" {
           "arn:aws:ssm:${local.region}:${data.aws_caller_identity.current.account_id}:parameter/${local.container_name}/cert",
           "arn:aws:ssm:${local.region}:${data.aws_caller_identity.current.account_id}:parameter/${local.container_name}/key"
         ]
-      },
-      {
-        Effect = "Allow"
-        Action = [
-          "ssm:StartSession",
-          "ssm:SendCommand",
-          "ssm:DescribeSessions",
-          "ssm:GetConnectionStatus",
-          "ssmmessages:CreateControlChannel",
-          "ssmmessages:CreateDataChannel",
-          "ssmmessages:OpenControlChannel",
-          "ssmmessages:OpenDataChannel"
-        ]
-        Resource = "*"
       }
     ]
   })
@@ -441,8 +371,8 @@ resource "aws_iam_role_policy_attachment" "ecs_task_ssm_attach" {
   policy_arn = aws_iam_policy.ecs_task_ssm_policy.arn
 }
 
-resource "aws_iam_role_policy_attachment" "ecs_task_ssm_attach2" {
-  provider    = aws.freetier
-  role       = aws_iam_role.ecs_task.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-}
+# resource "aws_iam_role_policy_attachment" "ecs_task_ssm_attach2" {
+#   provider    = aws.freetier
+#   role       = aws_iam_role.ecs_task.name
+#   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+# }
