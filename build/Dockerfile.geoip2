@@ -54,8 +54,8 @@ aws ssm get-parameter --name /nginx/key  --with-decryption --query Parameter.Val
 chmod 600 /etc/ssl/private/privkey.pem' /docker-entrypoint.sh
 
 # Copier awscli depuis l'image builder
-COPY --from=awscli /usr/local/aws-cli /usr/local/aws-cli
-COPY --from=awscli /usr/local/bin/aws /usr/local/bin/aws
+COPY --from=public.ecr.aws/aws-cli/aws-cli:2.9.9 /usr/local/aws-cli /usr/local/aws-cli
+COPY --from=public.ecr.aws/aws-cli/aws-cli:2.9.9 /usr/local/bin/aws /usr/local/bin/aws
 
 # Assurer que /usr/local/bin est dans le PATH
 ENV PATH="/usr/local/aws-cli/v2/current/bin:${PATH}"
