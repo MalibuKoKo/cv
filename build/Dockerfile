@@ -1,47 +1,62 @@
-# # https://blog.devops.dev/deploy-geo-restriced-service-with-nginx-geoip2-and-docker-7042fe380726
-# # FROM public.ecr.aws/nginx/nginx:1.28
-# # FROM public.ecr.aws/nginx/nginx-unprivileged:1.28
-# ARG NGINX_VERSION=1.28.0
-# FROM nginx:$NGINX_VERSION
-# ARG NGINX_VERSION=1.28.0
-# ARG GEOIP2_VERSION=3.4
-# RUN mkdir -p /var/lib/GeoIP/
-# RUN apt-get update \
-#     && apt-get install -y \
-#         build-essential \
-#         libpcre3-dev \
-#         zlib1g-dev \
-#         libgeoip-dev \
-#         libmaxminddb-dev \
-#         wget \
-#         curl \
-#         git
-# RUN cd /opt \
-#     && git clone --depth 1 -b $GEOIP2_VERSION --single-branch https://github.com/leev/ngx_http_geoip2_module.git \
-#     && wget -O - http://nginx.org/download/nginx-$NGINX_VERSION.tar.gz | tar zxfv - \
-#     && mv /opt/nginx-$NGINX_VERSION /opt/nginx \
-#     && cd /opt/nginx \
-#     && ./configure --with-compat --add-dynamic-module=/opt/ngx_http_geoip2_module \
-#     && make modules
+# https://blog.devops.dev/deploy-geo-restriced-service-with-nginx-geoip2-and-docker-7042fe380726
+# FROM public.ecr.aws/nginx/nginx:1.28
+# FROM public.ecr.aws/nginx/nginx-unprivileged:1.28
+ARG NGINX_VERSION=1.28.0
+FROM nginx:$NGINX_VERSION
+ARG NGINX_VERSION=1.28.0
+ARG GEOIP2_VERSION=3.4
+RUN mkdir -p /var/lib/GeoIP/
+RUN apt-get update \
+    && apt-get install -y \
+        build-essential \
+        libpcre3-dev \
+        zlib1g-dev \
+        libgeoip-dev \
+        libmaxminddb-dev \
+        wget \
+        curl \
+        git
+RUN cd /opt \
+    && git clone --depth 1 -b $GEOIP2_VERSION --single-branch https://github.com/leev/ngx_http_geoip2_module.git \
+    && wget -O - http://nginx.org/download/nginx-$NGINX_VERSION.tar.gz | tar zxfv - \
+    && mv /opt/nginx-$NGINX_VERSION /opt/nginx \
+    && cd /opt/nginx \
+    && ./configure --with-compat --add-dynamic-module=/opt/ngx_http_geoip2_module \
+    && make modules
 
-# FROM nginx:$NGINX_VERSION
-# RUN mkdir -p /usr/share/GeoIP /etc/nginx/geoip2
+FROM nginx:$NGINX_VERSION
+RUN mkdir -p /usr/share/GeoIP /etc/nginx/geoip2
 
-# # Téléchargement sécurisé depuis MaxMind
-# RUN --mount=type=secret,id=maxmind_token \
-#     MAXMIND_LICENSE_KEY=$(cat /run/secrets/maxmind_token) && \
-#     curl -sSLo /tmp/GeoLite2-Country.tar.gz -u ${MAXMIND_LICENSE_KEY} "https://download.maxmind.com/geoip/databases/GeoIP2-City-CSV/download?&suffix=tar.gz" \
-#     && tar -xz -C /usr/share/GeoIP --strip-components=1 -f /tmp/GeoLite2-Country.tar.gz \
-#     && rm /tmp/GeoLite2-Country.tar.gz
+# Téléchargement sécurisé depuis MaxMind
+RUN --mount=type=secret,id=maxmind_creds \
+    MAXMIND_CREDS=$(cat /run/secrets/maxmind_creds) && \
+    curl -sSLo /tmp/GeoLite2-Country.tar.gz -u "${MAXMIND_CREDS}" "https://download.maxmind.com/geoip/databases/GeoLite2-Country/download?edition_id=GeoLite2-Country&suffix=tar.gz" \
+    && tar -xz -C /usr/share/GeoIP --strip-components=1 -f /tmp/GeoLite2-Country.tar.gz \
+    && rm /tmp/GeoLite2-Country.tar.gz
 
-# FROM nginx:$NGINX_VERSION
-# COPY --from=0 /opt/nginx/objs/ngx_http_geoip2_module.so /usr/lib/nginx/modules
-# COPY --from=1 /usr/share/GeoIP /usr/share/GeoIP
-# RUN apt-get update \
-#     && apt-get install -y --no-install-recommends --no-install-suggests libmaxminddb0 \
-#     && apt-get clean \
-#     && rm -rf /var/lib/apt/lists/* \
-#     && chmod -R 644 /usr/lib/nginx/modules/ngx_http_geoip2_module.so
+FROM nginx:$NGINX_VERSION
+COPY --from=public.ecr.aws/aws-cli/aws-cli:2.9.9 /usr/local/aws-cli /usr/local/aws-cli
+COPY --from=public.ecr.aws/aws-cli/aws-cli:2.9.9 /usr/local/bin/aws /usr/local/bin/aws
+ENV PATH="/usr/local/aws-cli/v2/current/bin:${PATH}"
 
-FROM public.ecr.aws/nginx/nginx:1.28
+COPY --from=0 /opt/nginx/objs/ngx_http_geoip2_module.so /usr/lib/nginx/modules
+COPY --from=1 /usr/share/GeoIP /usr/share/GeoIP
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends --no-install-suggests libmaxminddb0 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && chmod -R 644 /usr/lib/nginx/modules/ngx_http_geoip2_module.so
+
+
+RUN sed -i '/^exec "\$@"/i \
+entrypoint_log "$0: Fetching SSL certificates from AWS SSM" && \
+aws ssm get-parameter --name /nginx/cert --with-decryption --query Parameter.Value --output text > /etc/ssl/certs/fullchain.pem && \
+aws ssm get-parameter --name /nginx/key  --with-decryption --query Parameter.Value --output text > /etc/ssl/private/privkey.pem && \
+aws ssm get-parameter --name /dummy/cert --with-decryption --query Parameter.Value --output text > /etc/ssl/certs/dummy_fullchain.pem && \
+aws ssm get-parameter --name /dummy/key  --with-decryption --query Parameter.Value --output text > /etc/ssl/private/dummy_privkey.pem && \
+chmod 600 /etc/ssl/private/privkey.pem' /docker-entrypoint.sh
+
+# https://hub.docker.com/r/maxmindinc/geoipupdate
+
+COPY build/nginx.conf /etc/nginx/nginx.conf
 COPY source/* /usr/share/nginx/html/

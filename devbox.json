@@ -29,8 +29,7 @@
         "echo $GHCR_PAT | docker login ghcr.io -u malibukoko --password-stdin",
         "docker buildx use cv||docker buildx create --name cv --use",
         "export DOCKER_TAG=$(cat VERSION)",
-        "docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/malibukoko/cv:${DOCKER_TAG} -f build/Dockerfile --push .",
-        "docker buildx build --platform linux/amd64,linux/arm64 --secret id=maxmind_creds,src=maxmind_creds.txt -t ghcr.io/malibukoko/cv:${DOCKER_TAG}-geoip2 -f build/Dockerfile.geoip2 --push ."
+        "docker buildx build --platform linux/amd64,linux/arm64 --secret id=maxmind_creds,src=maxmind_creds.txt -t ghcr.io/malibukoko/cv:${DOCKER_TAG} -f build/Dockerfile --push ."
       ],
       "dl-maxmind": [
         "MAXMIND_CREDS=$(cat maxmind_creds.txt)",
