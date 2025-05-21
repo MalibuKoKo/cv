@@ -38,7 +38,6 @@ FROM nginx:$NGINX_VERSION
 COPY --from=public.ecr.aws/aws-cli/aws-cli:2.9.9 /usr/local/aws-cli /usr/local/aws-cli
 COPY --from=public.ecr.aws/aws-cli/aws-cli:2.9.9 /usr/local/bin/aws /usr/local/bin/aws
 ENV PATH="/usr/local/aws-cli/v2/current/bin:${PATH}"
-
 COPY --from=0 /opt/nginx/objs/ngx_http_geoip2_module.so /usr/lib/nginx/modules
 COPY --from=1 /usr/share/GeoIP /usr/share/GeoIP
 RUN apt-get update \
