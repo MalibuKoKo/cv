@@ -48,14 +48,14 @@ http {
     }
 
     server {
-        listen       443;
+        listen       443 ssl;
         server_name  nicolas.collet.website;
 
         ssl_certificate /etc/ssl/certs/fullchain.pem;
         ssl_certificate_key /etc/ssl/private/privkey.pem;
 
-        ssl_protocols TLSv1.2 TLSv1.3;
-        ssl_ciphers HIGH:!aNULL:!MD5;
+        #ssl_protocols TLSv1.2 TLSv1.3;
+        #ssl_ciphers HIGH:!aNULL:!MD5;
 
         location / {
             if ($blocked_country) {
