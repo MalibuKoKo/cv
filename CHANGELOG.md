@@ -1,3 +1,10 @@
+## 1.6.2 (2025-05-21)
+
+### Fix
+
+- fix nginx config
+- fix nginx config
+
 ## 1.6.1 (2025-05-21)
 
 ### Fix
