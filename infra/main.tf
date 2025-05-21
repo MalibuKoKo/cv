@@ -117,6 +117,14 @@ module "ecs_service" {
       cidr_blocks              = ["0.0.0.0/0"]
       description              = "Allow HTTP from anywhere"
     }
+    https_in = {
+      type        = "ingress"
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+      description = "Allow HTTPS from anywhere"
+    }
     egress_all = {
       type        = "egress"
       from_port   = 0
@@ -138,6 +146,12 @@ module "ecs_service" {
           name          = local.container_name
           containerPort = local.container_port
           hostPort      = local.host_port
+          protocol      = "tcp"
+        },
+        {
+          name          = "https"
+          containerPort = 443
+          hostPort      = 443
           protocol      = "tcp"
         }
       ]
