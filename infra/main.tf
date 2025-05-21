@@ -282,6 +282,24 @@ resource "aws_ssm_parameter" "key" {
   tags        = local.tags
 }
 
+resource "aws_ssm_parameter" "dummy_cert" {
+  provider  = aws.freetier
+  name        = "/dummy/cert"
+  type        = "SecureString"  # chiffrement KMS automatique géré par AWS
+  description = "Certificat SSL pour dummy"
+  value       = file("certs/archive/dummy/fullchain.pem")  # chemin vers ton certificat local
+  tags        = local.tags
+}
+
+resource "aws_ssm_parameter" "dummy_key" {
+  provider    = aws.freetier
+  name        = "/dummy/key"
+  type        = "SecureString"
+  description = "Clé privée SSL pour dummy"
+  value       = file("certs/archive/dummy/privkey.pem")  # chemin vers ta clé privée locale
+  tags        = local.tags
+}
+
 resource "aws_iam_role" "ecs_task" {
   provider    = aws.freetier
   name = "ecs-task-role-myservice"
@@ -358,7 +376,9 @@ resource "aws_iam_policy" "ecs_task_ssm_policy" {
         ]
         Resource = [
           "arn:aws:ssm:${local.region}:${data.aws_caller_identity.current.account_id}:parameter/${local.container_name}/cert",
-          "arn:aws:ssm:${local.region}:${data.aws_caller_identity.current.account_id}:parameter/${local.container_name}/key"
+          "arn:aws:ssm:${local.region}:${data.aws_caller_identity.current.account_id}:parameter/${local.container_name}/key",
+          "arn:aws:ssm:${local.region}:${data.aws_caller_identity.current.account_id}:parameter/dummy/cert",
+          "arn:aws:ssm:${local.region}:${data.aws_caller_identity.current.account_id}:parameter/dummy/key"
         ]
       }
     ]

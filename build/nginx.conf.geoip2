@@ -36,6 +36,18 @@ http {
     }
 
     server {
+        listen 80 default_server;
+        return 403;
+    }
+
+    server {
+        listen 443 ssl default_server;
+        ssl_certificate /etc/ssl/certs/dummy_fullchain.pem;
+        ssl_certificate_key /etc/ssl/private/dummy_privkey.pem;
+        return 403;
+    }
+
+    server {
         listen 80;
         server_name nicolas.collet.website;
 
@@ -56,6 +68,16 @@ http {
 
         #ssl_protocols TLSv1.2 TLSv1.3;
         #ssl_ciphers HIGH:!aNULL:!MD5;
+
+        location = /VERSION {
+            if ($blocked_country) {
+                return 403;
+            }
+            root /usr/share/nginx/html;
+            add_header Cache-Control "no-cache, no-store, must-revalidate";
+            add_header Pragma "no-cache";
+            add_header Expires 0;
+        }
 
         location / {
             if ($blocked_country) {
