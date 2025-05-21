@@ -36,6 +36,13 @@
         "curl -sSLo /tmp/GeoLite2-Country.tar.gz -u \"${MAXMIND_CREDS}\" \"https://download.maxmind.com/geoip/databases/GeoLite2-Country/download?edition_id=GeoLite2-Country&suffix=tar.gz\"",
         "cat /tmp/GeoLite2-Country.tar.gz"
       ],
+      "tfapply": [
+        "cd infra",
+        "terraform apply -auto-approve",
+        "cd ..",
+        "git add infra/terraform.tfstate*",
+        "git commit -m \"chore: mise à jour du fichiers terraform.tfstate*\""
+      ],
       "tfstate": [
         "git add infra/terraform.tfstate*",
         "git commit -m \"chore: mise à jour du fichiers terraform.tfstate*\""
