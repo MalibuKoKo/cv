@@ -59,3 +59,4 @@ COPY --from=public.ecr.aws/aws-cli/aws-cli:2.9.9 /usr/local/bin/aws /usr/local/b
 
 # Assurer que /usr/local/bin est dans le PATH
 ENV PATH="/usr/local/aws-cli/v2/current/bin:${PATH}"
+COPY build/default.conf /etc/nginx/conf.d/default.conf
