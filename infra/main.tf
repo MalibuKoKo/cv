@@ -1,13 +1,10 @@
-# https://github.com/terraform-aws-modules/terraform-aws-alb/tree/master/examples
-# https://rebirth.devoteam.com/2023/07/18/ecs-fargate-terraform/
-
 locals {
   region = "eu-west-3"
   name   = "free-tier"
 
   vpc_cidr = "10.0.0.0/16"
-  # azs      = slice(data.aws_availability_zones.available.names, 0, 3)
-  azs      = [data.aws_availability_zones.available.names[0]]
+  azs            = [data.aws_availability_zones.available.names[0]] # slice(data.aws_availability_zones.available.names, 0, 3)
+  public_subnets = [cidrsubnet(local.vpc_cidr, 8, 48)]              # [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 48)]
 
   container_name = "nginx"
   container_port = 80
@@ -30,7 +27,6 @@ resource "aws_organizations_account" "free_tier" {
   role_name = "OrganizationAccountAccessRole"
   iam_user_access_to_billing = "ALLOW"
   provider  = aws.org
-  # tags = local.tags
 }
 
 ################################################################################
@@ -53,67 +49,8 @@ module "vpc" {
   cidr = local.vpc_cidr
 
   azs             = local.azs
-  # private_subnets = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 4, k)]
-  public_subnets  = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k + 48)]
-
-  enable_nat_gateway = false
-  single_nat_gateway = false
-
-  # enable_dns_hostnames = true
-  # enable_dns_support   = true
+  public_subnets  = local.public_subnets
 }
-
-
-resource "aws_security_group" "vpc_endpoints" {
-  provider = aws.freetier
-  name        = "vpc-endpoints"
-  description = "Allow ECS tasks to reach SSM endpoints"
-  vpc_id      = module.vpc.vpc_id
-
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = module.vpc.public_subnets_cidr_blocks
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-# resource "aws_vpc_endpoint" "ssm" {
-#   provider          = aws.freetier
-#   vpc_id            = module.vpc.vpc_id
-#   service_name      = "com.amazonaws.${local.region}.ssm"
-#   vpc_endpoint_type = "Interface"
-#   subnet_ids        = module.vpc.public_subnets
-#   security_group_ids = [aws_security_group.vpc_endpoints.id]
-#   private_dns_enabled = true
-# }
-
-# resource "aws_vpc_endpoint" "ssmmessages" {
-#   provider          = aws.freetier
-#   vpc_id            = module.vpc.vpc_id
-#   service_name      = "com.amazonaws.${local.region}.ssmmessages"
-#   vpc_endpoint_type = "Interface"
-#   subnet_ids        = module.vpc.public_subnets
-#   security_group_ids = [aws_security_group.vpc_endpoints.id]
-#   private_dns_enabled = true
-# }
-
-# resource "aws_vpc_endpoint" "ec2messages" {
-#   provider          = aws.freetier
-#   vpc_id            = module.vpc.vpc_id
-#   service_name      = "com.amazonaws.${local.region}.ec2messages"
-#   vpc_endpoint_type = "Interface"
-#   subnet_ids        = module.vpc.public_subnets
-#   security_group_ids = [aws_security_group.vpc_endpoints.id]
-#   private_dns_enabled = true
-# }
 
 ################################################################################
 # ECS Cluster
@@ -138,9 +75,6 @@ module "ecs_cluster" {
 
   # Désactive les options coûteuses
   create_cloudwatch_log_group = false
-
-  # Pas d'instance EC2 (on utilisera Fargate uniquement)
-  # default_capacity_provider_use_fargate = true
 }
 
 ################################################################################
@@ -257,9 +191,6 @@ module "ecs_service" {
     operating_system_family = "LINUX"
   }
 
-  # ephemeral_storage = {
-  #   size_in_gib = 1 # range (21 - 200)
-  # }
   create_tasks_iam_role = false
   tasks_iam_role_arn = aws_iam_role.ecs_task.arn
 }
@@ -335,36 +266,6 @@ resource "aws_iam_policy" "ecs_task_ssm_policy" {
   provider    = aws.freetier
   name = "ecs-task-ssm-access"
 
-  # policy = jsonencode({
-  #   Version = "2012-10-17"
-  #   Statement = [
-  #     {
-  #       Effect = "Allow"
-  #       Action = [
-  #         "ssm:GetParameter",
-  #         "ssm:GetParameters"
-  #       ]
-  #       Resource = [
-  #         "arn:aws:ssm:${local.region}:${data.aws_caller_identity.current.account_id}:parameter/${local.container_name}/cert",
-  #         "arn:aws:ssm:${local.region}:${data.aws_caller_identity.current.account_id}:parameter/${local.container_name}/key"
-  #       ]
-  #     },
-  #     {
-  #       Effect = "Allow"
-  #       Action = [
-  #         "ssm:StartSession",
-  #         "ssm:SendCommand",
-  #         "ssm:DescribeSessions",
-  #         "ssm:GetConnectionStatus",
-  #         "ssmmessages:CreateControlChannel",
-  #         "ssmmessages:CreateDataChannel",
-  #         "ssmmessages:OpenControlChannel",
-  #         "ssmmessages:OpenDataChannel"
-  #       ]
-  #       Resource = "*"
-  #     }
-  #   ]
-  # })
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -380,6 +281,20 @@ resource "aws_iam_policy" "ecs_task_ssm_policy" {
           "arn:aws:ssm:${local.region}:${data.aws_caller_identity.current.account_id}:parameter/dummy/cert",
           "arn:aws:ssm:${local.region}:${data.aws_caller_identity.current.account_id}:parameter/dummy/key"
         ]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "ssm:StartSession",
+          "ssm:SendCommand",
+          "ssm:DescribeSessions",
+          "ssm:GetConnectionStatus",
+          "ssmmessages:CreateControlChannel",
+          "ssmmessages:CreateDataChannel",
+          "ssmmessages:OpenControlChannel",
+          "ssmmessages:OpenDataChannel"
+        ]
+        Resource = "*"
       }
     ]
   })
@@ -390,9 +305,3 @@ resource "aws_iam_role_policy_attachment" "ecs_task_ssm_attach" {
   role       = aws_iam_role.ecs_task.name
   policy_arn = aws_iam_policy.ecs_task_ssm_policy.arn
 }
-
-# resource "aws_iam_role_policy_attachment" "ecs_task_ssm_attach2" {
-#   provider    = aws.freetier
-#   role       = aws_iam_role.ecs_task.name
-#   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-# }
