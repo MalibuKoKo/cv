@@ -1,3 +1,12 @@
+## 1.8.0 (2025-05-21)
+
+### Refactor
+
+- kiss, cleaning
+- kiss, cleaning
+- kiss, cleaning
+- kiss, cleaning
+
 ## 1.7.0 (2025-05-21)
 
 ### Feat
