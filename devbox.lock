@@ -2457,6 +2457,54 @@
         }
       }
     },
+    "ngrok@3.19.1": {
+      "last_modified": "2025-05-16T20:19:48Z",
+      "resolved": "github:NixOS/nixpkgs/12a55407652e04dcf2309436eb06fef0d3713ef3#ngrok",
+      "source": "devbox-search",
+      "version": "3.19.1",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/b1mx3hhfchsb6jnh4npbkcmxmjc9dgfn-ngrok-3.19.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/b1mx3hhfchsb6jnh4npbkcmxmjc9dgfn-ngrok-3.19.1"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/gr3ib9r6kb8v39d4dyh52h2xqa1wgrv3-ngrok-3.19.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/gr3ib9r6kb8v39d4dyh52h2xqa1wgrv3-ngrok-3.19.1"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/vdcc2zv7qs3ms9ql2n9naq7fjnwsmx3b-ngrok-3.19.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/vdcc2zv7qs3ms9ql2n9naq7fjnwsmx3b-ngrok-3.19.1"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/giq8zlik5j6iyc2dbw44dhhmrj2sywi3-ngrok-3.19.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/giq8zlik5j6iyc2dbw44dhhmrj2sywi3-ngrok-3.19.1"
+        }
+      }
+    },
     "oras@1.2.0": {
       "last_modified": "2024-12-03T12:40:06Z",
       "resolved": "github:NixOS/nixpkgs/566e53c2ad750c84f6d31f9ccb9d00f823165550#oras",

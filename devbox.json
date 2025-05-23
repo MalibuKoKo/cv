@@ -55,7 +55,8 @@
     "yj@5.1.0",
     "yq-go@4.45.1",
     "jp@0.2.1",
-    "kcl@0.11.1"
+    "kcl@0.11.1",
+    "ngrok@3.19.1"
   ],
   "env": {
     "KUBECONFIG": "/tmp/.kube/config"
@@ -66,8 +67,7 @@
       "kind get clusters | grep -q \"^demo$\" || kind create cluster --name demo --config bootstrap/overlays/kind/config.yaml",
       "kubectl config get-clusters | grep -q \"^kind-demo$\" || kind export kubeconfig --name demo",
       "kubectl config use-context kind-demo > /dev/null 2>&1",
-      "bootstrap/overlays/kind/start.sh",
-      "sudo hostctl add domains demo argocd.apps.io --ip 172.40.255.205"
+      "bootstrap/overlays/kind/start.sh"
     ],
     "scripts": {
       "build": [
