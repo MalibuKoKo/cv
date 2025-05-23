@@ -3,7 +3,6 @@ global:
 server:
   ingress:
     enabled: true
-    tls: true
     ingressClassName: nginx
     annotations:
       nginx.ingress.kubernetes.io/proxy-buffer-size: "256k"
