@@ -11,4 +11,5 @@ secretGenerator:
     - tls/tls.crt
     - tls/tls.key
     - ca/ca.crt
-  literals: []
+  options:
+    disableNameSuffixHash: true
