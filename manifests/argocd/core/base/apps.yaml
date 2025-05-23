@@ -1,0 +1,95 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: apps
+  namespace: argocd
+  labels:
+    app.kubernetes.io/instance: apps
+spec:
+  generators:
+    - matrix:
+        generators:
+          - git:
+              repoURL: https://github.com/MalibuKoKo/cv.git
+              revision: main
+              directories:
+              - path: manifests/*/*/overlays/kind
+          - clusters: {}
+  template:
+    metadata: 
+      annotations:
+        argocd.argoproj.io/manifest-generate-paths: charts;{{path[0]}}/{{path[1]}}/{{path[2]}}/base;{{path[0]}}/{{path[1]}}/{{path[2]}}/overlays/{{path[4]}}
+      finalizers:
+      - resources-finalizer.argocd.argoproj.io/background
+      labels:
+        app: '{{path[2]}}'
+        namespace: '{{path[1]}}'
+        overlay: '{{path[4]}}'
+      name: '{{path[1]}}-{{path[2]}}'
+    spec:
+      project: apps
+      info: []
+      source:
+        repoURL: https://github.com/MalibuKoKo/cv.git
+        targetRevision: main
+        path: '{{path}}'
+        kustomize:
+          namespace: '{{path[1]}}'
+      destination:
+        server: '{{server}}'
+        namespace: '{{path[1]}}'
+      revisionHistoryLimit: 3
+      syncPolicy: 
+        automated:
+          allowEmpty: true
+          prune: true
+          selfHeal: true
+        retry:
+          backoff:
+            duration: 30s
+            factor: 2
+            maxDuration: 2m0s
+          limit: 5
+        syncOptions:
+        - Validate=false
+        - CreateNamespace=true
+        - ApplyOutOfSyncOnly=true
+        - PrunePropagationPolicy=background
+        - PruneLast=true
+      ignoreDifferences: 
+        - group: admissionregistration.k8s.io
+          jqPathExpressions:
+          - .webhooks[]?.clientConfig.caBundle
+          kind: ValidatingWebhookConfiguration
+        - group: kyverno.io
+          jqPathExpressions:
+          - .spec.rules[] | select(.name|test("autogen-."))
+          kind: ClusterPolicy
+        - group: apps
+          jqPathExpressions:
+          - .spec.template.spec.containers[]?.imagePullPolicy
+          kind: Deployment
+        - group: apps
+          jqPathExpressions:
+          - .spec.template.spec.containers[]?.imagePullPolicy
+          kind: DaemonSet
+        - group: apps
+          jqPathExpressions:
+          - .spec.template.spec.containers[]?.imagePullPolicy
+          kind: StatefulSet
+        - jqPathExpressions:
+          - select(.metadata.annotations["argocd.argoproj.io/application-sync-ignore-configmap"]|test("data"))|.data
+          kind: ConfigMap
+        - jqPathExpressions:
+          - select(.metadata.annotations["argocd.argoproj.io/application-sync-ignore-secret"]|test("data"))|.data
+          kind: Secret
+        - group: networking.k8s.io
+          jqPathExpressions:
+          - select(.metadata.annotations["argocd.argoproj.io/application-sync-ignore-annotations"]|test("alb.ingress.kubernetes.io/certificate-arn"))|.metadata.annotations["alb.ingress.kubernetes.io/certificate-arn"]
+          kind: Ingress
+        - group: wafv2.services.k8s.aws
+          jqPathExpressions:
+          - .spec.rules[]?.statement.ipSetReferenceStatement
+          kind: WebACL
+  syncPolicy:
+    preserveResourcesOnDeletion: false
