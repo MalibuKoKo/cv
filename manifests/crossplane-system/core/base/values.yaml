@@ -1,7 +1,1 @@
-provider:
-  packages:
-  - xpkg.upbound.io/upbound/provider-aws-account:v1.22.0
-configuration:
-  packages: []
-function:
-  packages: []
+---
