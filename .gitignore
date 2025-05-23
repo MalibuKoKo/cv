@@ -1,5 +1,3 @@
 infra/**/.terraform/
 manifests/**/overlays/**/charts/
 manifests/**/base/**/charts/
-manifests/ingress-nginx/core/overlays/kind/tls/apps.io.crt
-manifests/ingress-nginx/core/overlays/kind/tls/apps.io.key
