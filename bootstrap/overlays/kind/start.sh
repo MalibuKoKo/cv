@@ -29,6 +29,7 @@ done
 # Initialize ArgoCD
 #############################################################################################
 ns=argocd
+kubectl --context ${kube_context} get ns ${ns} --no-headers --output name || kubectl --context ${kube_context} create ns ${ns}
 for file in $(find manifests -mindepth 5 -maxdepth 5 -type f -regex "manifests/${ns}/[^/]+/overlays/${overlay}/kustomization.yaml" -exec dirname {} \;|sort -u); do
   kustomize build --enable-helm --enable-alpha-plugins --load-restrictor LoadRestrictionsNone ${file} > ${manifests}
   if [[ -s "${manifests}" ]]; then kubectl --context ${kube_context} apply --server-side=true --force-conflicts -f ${manifests}; fi
