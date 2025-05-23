@@ -1,0 +1,6 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+- role: control-plane
+  # docker run --rm --network host quay.io/skopeo/stable:latest list-tags docker://docker.io/kindest/node | jq -r '.Tags[]' | sor
+  image: kindest/node:v1.32.5

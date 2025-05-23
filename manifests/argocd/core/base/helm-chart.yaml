@@ -1,0 +1,17 @@
+apiVersion: builtin
+kind: HelmChartInflationGenerator
+metadata:
+  name: argo-cd-helm-chart
+name: &name argo-cd
+version: 8.0.9
+repo: https://argoproj.github.io/argo-helm
+releaseName: *name
+namespace: argocd
+includeCRDs: &crd true
+AdditionalValuesFiles:
+- ../../base/values.yaml
+- values.yaml
+apiVersions:
+- cert-manager.io/v1
+- monitoring.coreos.com/v1
+- policy/v1

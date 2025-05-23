@@ -1,1 +1,3 @@
-infra/.terraform/
+infra/**/.terraform/
+manifests/**/overlays/**/charts/
+manifests/**/base/**/charts/

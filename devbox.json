@@ -1,21 +1,78 @@
 {
   "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.14.2/.schema/devbox.schema.json",
   "packages": [
-    "oci-cli@latest",
-    "terraform@1.11.4",
-    "hostctl@1.1.4",
-    "jq@1.7.1",
     "aws-vault@7.2.0",
     "awscli2@2.25.5",
-    "git-filter-repo@2.45.0"
+    "cfssl@1.6.5",
+    "commitizen@4.0.0",
+    "ctlptl@0.8.38",
+    "curl@8.11.1",
+    "dasel@2.8.1",
+    "dialog@1.3-20231002",
+    "dive@0.12.0",
+    "docker-buildx@0.18.0",
+    "fzf@0.58.0",
+    "git@2.47.1",
+    "git-filter-repo@2.45.0",
+    "glab@1.52.0",
+    "gnumake@4.4.1",
+    "gum@0.14.5",
+    "hostctl@latest",
+    "jc@1.25.4",
+    "jq@1.7.1",
+    "k9s@0.32.7",
+    "kail@0.17.4",
+    "kind@0.26.0",
+    "kluctl@2.26.0",
+    "kn@1.15.0",
+    "ko@0.15.4",
+    "krew@0.4.4",
+    "kube-bench@0.9.0",
+    "kube-score@1.19.0",
+    "kubebuilder@4.3.1",
+    "kubecm@0.32.2",
+    "kubectl-tree@0.4.3",
+    "kubectl@1.32.1",
+    "kubectx@0.9.5",
+    "kubent@0.7.3",
+    "kubepug@1.7.1",
+    "kubernetes-helm@3.17.0",
+    "kubescape@3.0.22",
+    "kubeseal@0.28.0",
+    "kustomize@5.6.0",
+    "kyverno-chainsaw@0.2.12",
+    "kyverno@1.13.2",
+    "lnav@0.12.3",
+    "oras@1.2.0",
+    "poetry@2.0.0",
+    "pre-commit@4.0.1",
+    "python@3.13.1",
+    "python313Packages.python-gitlab@5.3.1",
+    "rename@latest",
+    "terraform@1.11.4",
+    "tilt@0.33.17",
+    "x11docker@7.6.0",
+    "yj@5.1.0",
+    "yq-go@4.45.1",
+    "jp@0.2.1",
+    "kcl@0.11.1"
   ],
+  "env": {
+    "KUBECONFIG": "/tmp/.kube/config"
+  },
   "shell": {
     "init_hook": [
-      "echo 'Welcome to devbox!' > /dev/null"
+      "kind get clusters | grep -q \"^demo$\" || kind create cluster --name demo --config bootstrap/overlays/kind/config.yaml",
+      "kubectl config get-clusters | grep -q \"^kind-demo$\" || kind export kubeconfig --name demo",
+      "kubectl config use-context kind-demo > /dev/null 2>&1",
+      "bootstrap/overlays/kind/start.sh"
     ],
     "scripts": {
-      "test": [
-        "echo \"Error: no test specified\" && exit 1"
+      "build": [
+        "echo $GHCR_PAT | docker login ghcr.io -u malibukoko --password-stdin",
+        "docker buildx use cv||docker buildx create --name cv --use",
+        "export DOCKER_TAG=$(cat VERSION)",
+        "docker buildx build --platform linux/amd64,linux/arm64 --secret id=maxmind_creds,src=build/maxmind_creds.txt -t ghcr.io/malibukoko/cv:${DOCKER_TAG} -f build/Dockerfile --push ."
       ],
       "certbot": [
         "docker rm -f certbot-curl-base",
@@ -23,18 +80,7 @@
         "docker commit certbot-curl-base my-certbot-with-curl",
         "domain=$(grep -Po 'dns_record_a\\s+=\\s+\"\\K([^\"]+)' infra/terraform.tfvars).$(grep -Po 'domain_name\\s+=\\s+\"\\K([^\"]+)' infra/terraform.tfvars)",
         "email=$(grep -Po 'email\\s+=\\s+\"\\K([^\"]+)' infra/terraform.tfvars)",
-        "docker run -it --rm -e HOSTINGER_TOKEN=${HOSTINGER_TOKEN} --entrypoint=certbot --volume ./infra/certs:/tmp/config/letsencrypt --volume $(pwd)/create-dns-txt.sh:/sbin/create-dns-txt.sh --user $(id -u):$(id -g) docker.io/library/my-certbot-with-curl:latest certonly --manual-auth-hook /sbin/create-dns-txt.sh --manual --preferred-challenges=dns --no-eff-email --agree-tos -m $email -d $domain --config-dir /tmp/config/letsencrypt --work-dir /tmp/work/letsencrypt --logs-dir /tmp/log/letsencrypt"
-      ],
-      "build": [
-        "echo $GHCR_PAT | docker login ghcr.io -u malibukoko --password-stdin",
-        "docker buildx use cv||docker buildx create --name cv --use",
-        "export DOCKER_TAG=$(cat VERSION)",
-        "docker buildx build --platform linux/amd64,linux/arm64 --secret id=maxmind_creds,src=maxmind_creds.txt -t ghcr.io/malibukoko/cv:${DOCKER_TAG} -f build/Dockerfile --push ."
-      ],
-      "dl-maxmind": [
-        "MAXMIND_CREDS=$(cat maxmind_creds.txt)",
-        "curl -sSLo /tmp/GeoLite2-Country.tar.gz -u \"${MAXMIND_CREDS}\" \"https://download.maxmind.com/geoip/databases/GeoLite2-Country/download?edition_id=GeoLite2-Country&suffix=tar.gz\"",
-        "cat /tmp/GeoLite2-Country.tar.gz"
+        "docker run -it --rm -e HOSTINGER_TOKEN=${HOSTINGER_TOKEN} --entrypoint=certbot --volume ./infra/certs:/tmp/config/letsencrypt --volume ./scripts/create-dns-txt.sh:/sbin/create-dns-txt.sh --user $(id -u):$(id -g) docker.io/library/my-certbot-with-curl:latest certonly --manual-auth-hook /sbin/create-dns-txt.sh --manual --preferred-challenges=dns --no-eff-email --agree-tos -m $email -d $domain --config-dir /tmp/config/letsencrypt --work-dir /tmp/work/letsencrypt --logs-dir /tmp/log/letsencrypt"
       ],
       "tfapply": [
         "cd infra",
@@ -43,35 +89,10 @@
         "git add infra/terraform.tfstate*",
         "git commit -m \"chore: mise à jour du fichiers terraform.tfstate*\""
       ],
-      "tfstate": [
-        "git add infra/terraform.tfstate*",
-        "git commit -m \"chore: mise à jour du fichiers terraform.tfstate*\""
-      ],
       "bump": [
         "git pull",
         "git fetch --all --tags",
-        "cz bump --changelog",
-        "git push origin $(git tag --sort v:refname | cat | tail -n 1)",
-        "git push origin"
-      ],
-      "bump_patch": [
-        "git pull",
-        "git fetch --all --tags",
-        "cz bump --changelog --increment PATCH",
-        "git push origin $(git tag --sort v:refname | cat | tail -n 1)",
-        "git push origin"
-      ],
-      "bump_minor": [
-        "git pull",
-        "git fetch --all --tags",
-        "cz bump --changelog --increment MINOR",
-        "git push origin $(git tag --sort v:refname | cat | tail -n 1)",
-        "git push origin"
-      ],
-      "bump_major": [
-        "git pull",
-        "git fetch --all --tags",
-        "cz bump --changelog --increment MAJOR",
+        "cz bump --changelog --increment $(gum choose PATCH MINOR MAJOR)",
         "git push origin $(git tag --sort v:refname | cat | tail -n 1)",
         "git push origin"
       ]
