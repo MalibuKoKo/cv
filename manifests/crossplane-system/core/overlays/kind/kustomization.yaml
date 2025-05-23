@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: crossplane-system
+resources:
+  - ../../base
+generators:
+  - ../../base/helm-chart.yaml
+patches:
+  - patch: |-
+      - op: add
+        path: /metadata/annotations
+        value:
+          argocd.argoproj.io/sync-options: Replace=true,ServerSideApply=true
+    target:
+      kind: CustomResourceDefinition
