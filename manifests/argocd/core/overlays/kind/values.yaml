@@ -9,4 +9,4 @@ server:
       nginx.ingress.kubernetes.io/proxy-buffer-size: "256k"
 config:
   secret:
-    argocdServerAdminPassword: $2y$10$eRwg06qCtaCwRGrlbsuVn.5BQ6999gYHNs8Leza7Gr0Dzg/hR.wKS
+    argocdServerAdminPassword: $2a$10$F26qfgUpUhB22pTLuUuCwOlheFmK/xV14jyRSYBY6ubEN0E1oOstG
