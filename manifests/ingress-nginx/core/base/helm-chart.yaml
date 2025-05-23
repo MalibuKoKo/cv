@@ -1,0 +1,16 @@
+apiVersion: builtin
+kind: HelmChartInflationGenerator
+name: &name ingress-nginx
+metadata:
+  name: *name
+version: 4.12.2
+repo: https://kubernetes.github.io/ingress-nginx
+releaseName: *name
+namespace: ingress-nginx
+includeCRDs: &crd true
+AdditionalValuesFiles:
+- ../../base/values.yaml
+- values.yaml
+apiVersions:
+- autoscaling/v2
+- monitoring.coreos.com/v1
