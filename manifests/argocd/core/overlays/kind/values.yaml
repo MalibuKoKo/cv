@@ -1,2 +1,8 @@
 global:
   domain: argocd.apps.io
+server:
+  ingress:
+    enabled: true
+    ingressClassName: ingress
+    annotations:
+      kubernetes.io/tls-acme: "true"
