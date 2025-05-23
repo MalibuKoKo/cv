@@ -8,6 +8,7 @@ secretGenerator:
   namespace: ingress-nginx
   type: kubernetes.io/tls
   files:
-    - tls/apps.io.crt
-    - tls/apps.io.key
+    - tls/tls.crt
+    - tls/tls.key
+    - ca/ca.crt
   literals: []
