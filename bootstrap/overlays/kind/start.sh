@@ -34,7 +34,7 @@ for file in $(find manifests -mindepth 5 -maxdepth 5 -type f -regex "manifests/$
   kustomize build --enable-helm --enable-alpha-plugins --load-restrictor LoadRestrictionsNone ${file} > ${manifests}
   if [[ -s "${manifests}" ]]; then kubectl --context ${kube_context} apply --server-side=true --force-conflicts -f ${manifests}; fi
 done
-until kubectl --context ${kube_context} get ns ${ns} get pod -l 'app.kubernetes.io/part-of=argocd,!batch.kubernetes.io/job-name' -o name | grep -q .; do
+until kubectl --context ${kube_context} -n ${ns} get pod -l 'app.kubernetes.io/part-of=argocd,!batch.kubernetes.io/job-name' -o name | grep -q .; do
   echo "En attente que les pods ArgoCD apparaissent..."
   sleep 2
 done
