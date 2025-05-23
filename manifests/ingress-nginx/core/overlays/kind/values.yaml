@@ -1,4 +1,6 @@
 controller:
+  admissionWebhooks:
+    enabled: false
   service:
     annotations:
       metallb.universe.tf/loadBalancerIPs: 172.40.255.205
