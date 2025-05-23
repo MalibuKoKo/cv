@@ -35,9 +35,10 @@ for file in $(find manifests -mindepth 5 -maxdepth 5 -type f -regex "manifests/$
 done
 sleep 2
 kubectl --context ${kube_context} -n ${ns} wait --for=condition=Ready pod -l app.kubernetes.io/part-of=argocd --timeout 10m
+kubectl --context ${kube_context} -n ${ns} rollout restart deployment/argocd-applicationset-controller
 #############################################################################################
 # Print informations
 #############################################################################################
 echo -e "\e[1m\e[32mkubectl --context ${kube_context} -n ${ns} get secrets/argocd-initial-admin-secret -o jsonpath=\"{.data.password}\" | base64 -d \e[0m" >&2
-echo -e "\e[1m\e[32mkubectl --context ${kube_context} -n ${ns} port-forward service/argocd-server  8080:443\e[0m" >&2
+echo -e "\e[1m\e[32mkubectl --context ${kube_context} -n ${ns} port-forward service/argocd-server  8080:80\e[0m" >&2
 echo -e "\e[1m\e[32mecho 'http://127.0.0.1:8080'\e[0m" >&2
