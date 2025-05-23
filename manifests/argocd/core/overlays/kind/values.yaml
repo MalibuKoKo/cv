@@ -6,7 +6,3 @@ server:
     ingressClassName: nginx
     annotations:
       nginx.ingress.kubernetes.io/proxy-buffer-size: "256k"
-      nginx.ingress.kubernetes.io/configuration-snippet: |
-        if ($scheme = https) {
-          return 301 http://$host$request_uri;
-        }

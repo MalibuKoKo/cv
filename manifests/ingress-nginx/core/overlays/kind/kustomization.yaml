@@ -3,3 +3,11 @@ kind: Kustomization
 namespace: ingress-nginx
 generators:
 - ../../base/helm-chart.yaml
+secretGenerator:
+- name: default-cert
+  namespace: ingress-nginx
+  type: kubernetes.io/tls
+  files:
+    - tls/apps.io.crt
+    - tls/apps.io.key
+  literals: []
