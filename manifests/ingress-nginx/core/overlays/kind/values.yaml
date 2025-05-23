@@ -2,3 +2,4 @@ controller:
   service:
     annotations:
       metallb.universe.tf/address-pool: kind-ip-pool
+    loadBalancerIP: 172.40.255.205
