@@ -1,5 +1,5 @@
 global:
-  domain: argocd.172.40.255.205.sslip.io
+  domain: argocd.apps.io
 server:
   ingress:
     enabled: true
