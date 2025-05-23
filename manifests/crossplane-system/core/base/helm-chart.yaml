@@ -3,7 +3,7 @@ kind: HelmChartInflationGenerator
 name: &name crossplane
 metadata:
   name: *name
-version: 1.18.2
+version: 1.18.2 # 1.20.0
 repo: https://charts.crossplane.io/stable
 releaseName: *name
 namespace: crossplane-system
