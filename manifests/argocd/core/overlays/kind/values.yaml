@@ -10,3 +10,5 @@ server:
 configs:
   secret:
     argocdServerAdminPassword: "$2a$10$6ZsSd4LcJiyJCwAa/G1Yg.MSyJTKHire1ubRZoWSfZex0n4bNneZi"
+  cm:
+    server.sessionDuration: "86400" # 24h
