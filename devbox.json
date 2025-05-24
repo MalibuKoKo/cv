@@ -76,6 +76,9 @@
       "bootstrap/overlays/kind/start.sh"
     ],
     "scripts": {
+      "creds": [
+        "bootstrap/overlays/kind/creds.sh"
+      ],
       "build": [
         "echo $GHCR_PAT | docker login ghcr.io -u malibukoko --password-stdin",
         "docker buildx use cv||docker buildx create --name cv --use",
