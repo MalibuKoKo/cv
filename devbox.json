@@ -73,7 +73,8 @@
       "kind get clusters | grep -q \"^demo$\" || kind create cluster --name demo --config bootstrap/overlays/kind/config.yaml",
       "kubectl config get-clusters | grep -q \"^kind-demo$\" || kind export kubeconfig --name demo",
       "kubectl config use-context kind-demo > /dev/null 2>&1",
-      "bootstrap/overlays/kind/start.sh"
+      "bootstrap/overlays/kind/start.sh",
+      "bootstrap/overlays/kind/creds.sh"
     ],
     "scripts": {
       "creds": [
