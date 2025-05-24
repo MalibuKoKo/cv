@@ -11,5 +11,11 @@
   path: /spec/revisionHistoryLimit
   value: 1
 - op: add
+  path: /spec/runtimeConfigRef
+  value:
+    apiVersion: pkg.crossplane.io/v1beta1
+    kind: DeploymentRuntimeConfig
+    name: default
+- op: add
   path: /spec/skipDependencyResolution
   value: false
