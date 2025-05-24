@@ -9,8 +9,8 @@ global:
 configs:
   secret:
     createSecret: true
-  # params:
-  #   server.insecure: true
+  params:
+    server.insecure: true
   cm:
     exec.enabled: "true"
     timeout.reconciliation: 180s
