@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: crossplane-system
 resources:
 - aws/account.yaml
+- aws/organizations.yaml
 patches:
 - target:
     kind: Provider
