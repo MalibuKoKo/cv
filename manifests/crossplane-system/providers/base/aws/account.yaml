@@ -3,4 +3,4 @@ kind: Provider
 metadata:
   name: provider-aws-account
 spec:
-  package: xpkg.upbound.io/upbound/provider-aws-account:v1
+  package: xpkg.upbound.io/upbound/provider-aws-account:v1.22.0

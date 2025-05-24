@@ -1,0 +1,22 @@
+- op: add
+  path: /spec/ignoreCrossplaneConstraints
+  value: false
+- op: add
+  path: /spec/packagePullPolicy
+  value: IfNotPresent
+- op: add
+  path: /spec/revisionActivationPolicy
+  value: Automatic
+- op: add
+  path: /spec/revisionHistoryLimit
+  value: 1
+- op: add
+  path: /spec/runtimeConfigRef
+  value:
+    runtimeConfigRef:
+      apiVersion: pkg.crossplane.io/v1beta1
+      kind: DeploymentRuntimeConfig
+      name: default
+- op: add
+  path: /spec/skipDependencyResolution
+  value: false

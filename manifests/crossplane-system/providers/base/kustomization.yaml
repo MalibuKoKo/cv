@@ -3,3 +3,9 @@ kind: Kustomization
 namespace: crossplane-system
 resources:
 - aws/account.yaml
+patches:
+- target:
+    kind: Provider
+    group: pkg.crossplane.io
+    version: v1
+  path: ../../../../patches/patch-providers.yaml
