@@ -6,8 +6,8 @@ set -euo pipefail
 KUBE_CONTEXT=kind-demo
 NAMESPACE=crossplane-system
 CRD=providerconfigs.aws.upbound.io
-PROVIDER_CONFIG=aws-org-admin
-SECRET=${PROVIDER_CONFIG}
+PROVIDER_CONFIG=default
+SECRET=aws-org-admin
 K_ARGS="--context ${KUBE_CONTEXT} --namespace ${NAMESPACE}"
 
 
