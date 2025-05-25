@@ -20,6 +20,7 @@ AWS_PROFILE=$(aws-vault list --profiles | fzf --prompt="Choisir un profil AWS: "
 echo -n "ns: "; until kubectl ${K_ARGS} get ns ${NAMESPACE} >/dev/null 2>&1; do echo -n "."; sleep 1; done; echo -n ". done"; echo
 
 aws-vault export ${AWS_PROFILE} --format ini > ${TMP_FILE}
+sed -i "s/${AWS_PROFILE}/default/" ${TMP_FILE}
 kubectl ${K_ARGS} create secret generic ${SECRET} --from-file=creds=${TMP_FILE} --dry-run=client -o yaml | kubectl ${K_ARGS} apply -f -
 echo "crd: "; until kubectl ${K_ARGS} get crd ${CRD} >/dev/null 2>&1; do echo -n "."; sleep 1; done; echo -n ". done"; echo
 echo "object: "; until kubectl ${K_ARGS} get ${CRD} ${PROVIDER_CONFIG} >/dev/null 2>&1; do echo -n "."; sleep 1; done; echo -n ". done"; echo
