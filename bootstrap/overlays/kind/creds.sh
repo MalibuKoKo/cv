@@ -26,3 +26,4 @@ echo "crd: "; until kubectl ${K_ARGS} get crd ${CRD} >/dev/null 2>&1; do echo -n
 echo "object: "; until kubectl ${K_ARGS} get ${CRD} ${PROVIDER_CONFIG} >/dev/null 2>&1; do echo -n "."; sleep 1; done; echo -n ". done"; echo
 HASH=$(kubectl ${K_ARGS} get secret ${SECRET} -o json | sha256sum | cut -d ' ' -f1)
 kubectl ${K_ARGS} annotate ${CRD} ${PROVIDER_CONFIG} credsHash="$HASH" --overwrite
+kubectl ${K_ARGS} apply -f bootstrap/overlays/kind/account.yaml

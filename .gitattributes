@@ -9,3 +9,4 @@ build/maxmind_creds.txt filter=git-crypt diff=git-crypt
 hostctl.sh filter=git-crypt diff=git-crypt
 scripts/hostctl.sh filter=git-crypt diff=git-crypt
 infra/certs/** filter=git-crypt diff=git-crypt
+bootstrap/overlays/kind/account.yaml filter=git-crypt diff=git-crypt
