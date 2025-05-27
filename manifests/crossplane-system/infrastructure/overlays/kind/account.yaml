@@ -1,0 +1,16 @@
+# see: bootstrap/overlays/kind/account.yaml
+---
+apiVersion: organizations.aws.upbound.io/v1beta1
+kind: Account
+metadata:
+  name: demo
+  # annotations:
+  #   crossplane.io/external-name: ""
+spec:
+  forProvider:
+    # region: ""
+    # email: ""
+    # name: ""
+    closeOnDeletion: true
+  # deletionPolicy: Orphan
+  # managementPolicy: ObserveOnly
