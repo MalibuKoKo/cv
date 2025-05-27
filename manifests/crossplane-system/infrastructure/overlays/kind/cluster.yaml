@@ -1,0 +1,19 @@
+apiVersion: devopstoolkitseries.com/v1alpha1
+kind: ClusterClaim
+metadata:
+  name: demo
+spec:
+  id: demo
+  compositionSelector:
+    matchLabels:
+      provider: aws
+      cluster: eks
+  parameters:
+    nodeSize: small
+    minNodeCount: 1
+    usage:
+      enabled: true
+    version: "1.30"
+    apps:
+      traefik:
+        enabled: true
