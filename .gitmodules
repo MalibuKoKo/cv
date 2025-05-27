@@ -1,0 +1,4 @@
+[submodule "manifests/crossplane-system/infrastructure/base/crossplane-kubernetes"]
+	path = manifests/crossplane-system/infrastructure/base/crossplane-kubernetes
+	url = https://github.com/MalibuKoKo/crossplane-kubernetes
+	branch = main
