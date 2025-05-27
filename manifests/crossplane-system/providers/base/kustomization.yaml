@@ -5,7 +5,7 @@ resources:
 - aws/account.yaml
 # - aws/ec2.yaml
 # - aws/eks.yaml
-# - aws/iam.yaml
+- aws/iam.yaml
 - aws/organizations.yaml
 patches:
 - target:
