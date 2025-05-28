@@ -7,7 +7,6 @@ server:
     ingressClassName: nginx
     annotations:
       nginx.ingress.kubernetes.io/proxy-buffer-size: "256k"
-      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
 configs:
   secret:
     argocdServerAdminPassword: "$2a$10$6ZsSd4LcJiyJCwAa/G1Yg.MSyJTKHire1ubRZoWSfZex0n4bNneZi"
