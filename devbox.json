@@ -95,7 +95,7 @@
         "docker run -it --rm -e HOSTINGER_TOKEN=${HOSTINGER_TOKEN} --entrypoint=certbot --volume ./infra/certs:/tmp/config/letsencrypt --volume ./scripts/create-dns-txt.sh:/sbin/create-dns-txt.sh --user $(id -u):$(id -g) docker.io/library/my-certbot-with-curl:latest certonly --manual-auth-hook /sbin/create-dns-txt.sh --manual --preferred-challenges=dns --no-eff-email --agree-tos -m $email -d $domain --config-dir /tmp/config/letsencrypt --work-dir /tmp/work/letsencrypt --logs-dir /tmp/log/letsencrypt"
       ],
       "tfapply": [
-        "cd infra",
+        "cd infra/terraform",
         "terraform apply -auto-approve",
         "cd ..",
         "git add infra/terraform.tfstate*",
