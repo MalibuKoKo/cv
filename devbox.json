@@ -98,7 +98,7 @@
         "cd infra/terraform",
         "terraform apply -auto-approve",
         "cd ..",
-        "git add infra/terraform.tfstate*",
+        "git add infra/terraform/terraform.tfstate*",
         "git commit -m \"chore: mise à jour du fichiers terraform.tfstate*\""
       ],
       "bump": [
