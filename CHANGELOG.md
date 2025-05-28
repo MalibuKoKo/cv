@@ -1,3 +1,86 @@
+## 1.9.0 (2025-05-28)
+
+### Feat
+
+- **provider**: add ec2, eks & iam
+- annotate provider config
+- add ProviderConfig
+- add submodule crossplane-kubernetes
+- **infra**: update account
+- **infra**: update account
+- **infra**: remove account
+- **infra**: create account
+- **crossplane**: create dot-kubernetes
+- **crossplane**: create AWS Account
+- **crossplane**: setup ProviderConfig
+- **crossplane**: setup ProviderConfig
+- **crossplane**: setup providers
+- **crossplane**: setup providers
+- **crossplane**: setup providers
+- **crossplane**: setup providers
+- **crossplane**: setup providers
+- **crossplane**: setup providers
+- **crossplane**: setup providers
+- **crossplane**: setup providers
+- **crossplane**: setup providers
+- **crossplane**: setup providers
+- **crossplane**: setup providers
+- **crossplane**: setup providers
+- **crossplane**: setup providers
+- crossplane
+- debug crossplane
+- remove crossplane
+- add crossplane
+- add crossplane
+- create CA & generate certs
+- create CA & generate certs
+- create CA & generate certs
+- create CA & generate certs
+- create CA & generate certs
+- create CA & generate certs
+- create CA & generate certs
+- add cert-manager
+- add ingress for Argo
+- add ingress for Argo
+- add ingress nginx
+- add ingress nginx
+- add ingress nginx
+- add metallb
+- add applicationsets
+- add applicationsets
+- add applicationsets
+- add k8S
+
+### Fix
+
+- **argocd**: try to fix 401 error
+- **provider**: try to fix error message: current package revision is unhealthy
+- **provider**: try to fix error message: current package revision is unhealthy
+- **provider**: change package for ec2, eks & iam in order to fix error message: current package revision is unhealthy
+- wrong yaml key :(
+-  need to restart applicationset ctrl
+
+### Refactor
+
+- **cv**: optimize skill
+- **cv**: optimize skill
+- update argocdServerAdminPassword
+- update argocdServerAdminPassword
+- update argocdServerAdminPassword
+- update argocdServerAdminPassword
+- update argocdServerAdminPassword
+- define argocdServerAdminPassword
+- define argocdServerAdminPassword
+- define argocdServerAdminPassword
+- optimize bootstrap
+- optimize bootstrap
+- create namespace if missing
+- HTTPS => HTTP for dev
+- HTTPS => HTTP for dev
+- HTTPS => HTTP for dev
+- HTTPS => HTTP for dev
+- kiss, cleaning
+
 ## 1.8.0 (2025-05-21)
 
 ### Refactor
