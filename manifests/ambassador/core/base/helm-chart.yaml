@@ -1,0 +1,16 @@
+apiVersion: builtin
+kind: HelmChartInflationGenerator
+metadata:
+  name: helm-chart-edge-stack
+name: edge-stack
+version: 8.12.4
+repo: https://s3.amazonaws.com/datawire-static-files/charts #https://www.getambassador.io
+releaseName: aes
+namespace: ambassador
+includeCRDs: &crd false
+AdditionalValuesFiles:
+- ../../base/values.yaml
+- values.yaml
+apiVersions:
+- networking.k8s.io/v1/IngressClass
+- autoscaling/v2

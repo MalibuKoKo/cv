@@ -1,0 +1,5 @@
+emissary-ingress:
+  replicaCount: 1
+  service:
+    annotations:
+      metallb.universe.tf/loadBalancerIPs: 172.40.255.206

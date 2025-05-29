@@ -1,0 +1,4 @@
+licenseKey:
+  createSecret: false
+  secretName: ambassador-edge-stack
+  value: ""
