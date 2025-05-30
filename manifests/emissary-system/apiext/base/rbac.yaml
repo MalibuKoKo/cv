@@ -22,5 +22,5 @@ roleRef:
   name: edge-stack-apiext
 subjects:
   - kind: ServiceAccount
-    name: aes-edge-stack
+    name: edge-stack
     namespace: ambassador
