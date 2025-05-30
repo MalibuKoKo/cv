@@ -1,6 +1,20 @@
+# https://app.getambassador.io/cloud/clusters
 emissary-ingress:
   replicaCount: 1
   service:
     annotations:
       metallb.universe.tf/loadBalancerIPs: 172.40.255.206
-# https://app.getambassador.io/cloud/clusters
+    # Note that target http ports need to match your ambassador configurations service_port
+    # https://www.getambassador.io/reference/modules/#the-ambassador-module
+    ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+    - name: https
+      port: 443
+      targetPort: 443
+  security:
+    podSecurityContext:
+      sysctls:
+      - name: "net.ipv4.ip_unprivileged_port_start"
+        value: "0"

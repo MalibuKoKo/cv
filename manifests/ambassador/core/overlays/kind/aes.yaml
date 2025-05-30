@@ -1,0 +1,26 @@
+---
+apiVersion: getambassador.io/v3alpha1
+kind: Host
+metadata:
+  name: argocd
+  namespace: ambassador
+  annotations:
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
+    argocd.argoproj.io/sync-options: Prune=false
+    argocd.argoproj.io/tracking-id: ambassador-core:getambassador.io/Host:ambassador/argocd
+spec:
+  hostname: argocd.gw.io
+---
+apiVersion: getambassador.io/v2
+kind: Mapping
+metadata:
+  name: argocd-server-ui
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
+    argocd.argoproj.io/sync-options: Prune=false
+    argocd.argoproj.io/tracking-id: ambassador-core:getambassador.io/Mapping:argocd/argocd-server-ui
+spec:
+  host: argocd.gw.io
+  prefix: /
+  service: https://argocd-server:443
