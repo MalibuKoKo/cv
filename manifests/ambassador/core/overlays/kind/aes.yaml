@@ -1,5 +1,29 @@
 ---
 apiVersion: getambassador.io/v3alpha1
+kind: Listener
+metadata:
+  name: http-listener
+spec:
+  hostBinding:
+    namespace:
+      from: ALL
+  port: 80
+  protocol: HTTP
+  securityModel: XFP
+---
+apiVersion: getambassador.io/v3alpha1
+kind: Listener
+metadata:
+  name: https-listener
+spec:
+  hostBinding:
+    namespace:
+      from: ALL
+  port: 443
+  protocol: HTTPS
+  securityModel: XFP
+---
+apiVersion: getambassador.io/v3alpha1
 kind: Host
 metadata:
   name: argocd

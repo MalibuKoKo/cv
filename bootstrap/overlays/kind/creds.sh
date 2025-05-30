@@ -28,3 +28,4 @@ secret-tool lookup profile "${profile}" > ${TMP_FILE}
 
 kubectl --context kind-demo --namespace ambassador create secret generic edge-stack-agent-cloud-token --from-file=CLOUD_CONNECT_TOKEN=${TMP_FILE} --dry-run=client -o yaml | kubectl --context kind-demo --namespace ambassador apply -f -
 kubectl --context kind-demo --namespace ambassador annotate secret edge-stack-agent-cloud-token argocd.argoproj.io/tracking-id=ambassador-core:/Secret:ambassador/edge-stack-agent-cloud-token argocd.argoproj.io/compare-options=IgnoreExtraneous argocd.argoproj.io/sync-options=Prune=false
+kubectl --context kind-demo --namespace ambassador rollout restart deploy/edge-stack

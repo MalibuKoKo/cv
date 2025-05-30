@@ -5,23 +5,23 @@ generators:
 # resources:
 # - aes.yaml
 patches:
-- patch: |-
-    - op: replace
-      path: /spec/ports
-      value:
-        - appProtocol: http
-          name: http
-          port: 80
-          protocol: TCP
-          targetPort: http
-        - appProtocol: https
-          name: https
-          port: 443
-          protocol: TCP
-          targetPort: https
-  target:
-    kind: Service
-    name: edge-stack
+# - patch: |-
+#     - op: replace
+#       path: /spec/ports
+#       value:
+#         - appProtocol: http
+#           name: http
+#           port: 80
+#           protocol: TCP
+#           targetPort: http
+#         - appProtocol: https
+#           name: https
+#           port: 443
+#           protocol: TCP
+#           targetPort: https
+#   target:
+#     kind: Service
+#     name: edge-stack
 - patch: |-
     - op: replace
       path: /rules

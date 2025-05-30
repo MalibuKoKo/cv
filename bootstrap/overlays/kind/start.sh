@@ -7,6 +7,11 @@ export KUBECONFIG=/tmp/.kube/config
 overlay=kind
 kube_context=kind-demo
 #############################################################################################
+# inotify limits - prevent Too many open files
+#############################################################################################
+if [[ $(cat /proc/sys/fs/inotify/max_user_watches) -ne 1048576 ]]; then sudo sysctl fs.inotify.max_user_watches=1048576; fi
+if [[ $(cat /proc/sys/fs/inotify/max_user_instances) -ne 8192  ]]; then sudo sysctl fs.inotify.max_user_instances=8192;  fi
+#############################################################################################
 # Create temporary file which contains generated manifests
 #############################################################################################
 manifests=$(mktemp /tmp/manifests.XXXXXXXXXX)
