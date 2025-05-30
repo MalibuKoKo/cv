@@ -5,7 +5,7 @@ metadata:
 name: edge-stack
 version: 8.12.4
 repo: https://s3.amazonaws.com/datawire-static-files/charts #https://www.getambassador.io
-releaseName: aes
+releaseName: edge-stack
 namespace: ambassador
 includeCRDs: &crd false
 AdditionalValuesFiles:

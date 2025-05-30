@@ -27,3 +27,4 @@ profile=$(for item in $(gdbus call --session --dest org.freedesktop.secrets --ob
 secret-tool lookup profile "${profile}" > ${TMP_FILE}
 
 kubectl --context kind-demo --namespace ambassador create secret generic ambassador-edge-stack --from-file=license-key=${TMP_FILE} --dry-run=client -o yaml | kubectl --context kind-demo --namespace ambassador apply -f -
+kubectl --context kind-demo --namespace ambassador annotate secret ambassador-edge-stack argocd.argoproj.io/tracking-id=ambassador-core:/Secret:ambassador/ambassador-edge-stack argocd.argoproj.io/compare-options=IgnoreExtraneous argocd.argoproj.io/sync-options=Prune=false
