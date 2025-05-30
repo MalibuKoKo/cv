@@ -3,3 +3,4 @@ emissary-ingress:
   service:
     annotations:
       metallb.universe.tf/loadBalancerIPs: 172.40.255.206
+# https://app.getambassador.io/cloud/clusters

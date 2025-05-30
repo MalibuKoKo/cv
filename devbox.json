@@ -67,6 +67,7 @@
   "shell": {
     "init_hook": [
       "hostctl list domains demo argocd.apps.io --out json | jq -e '.[0] | select(.IP == \"172.40.255.205\" and .Status == \"on\")' || sudo hostctl add domains demo argocd.apps.io --ip 172.40.255.205",
+      "hostctl list domains demo argocd.gw.io --out json | jq -e '.[0] | select(.IP == \"172.40.255.206\" and .Status == \"on\")' || sudo hostctl add domains demo argocd.gw.io --ip 172.40.255.206",
       "mkcert -install",
       "[ -f manifests/ingress-nginx/core/overlays/kind/tls/tls.crt ] || mkcert -cert-file manifests/ingress-nginx/core/overlays/kind/tls/tls.crt -key-file manifests/ingress-nginx/core/overlays/kind/tls/tls.key apps.io '*.apps.io' 172.40.255.205",
       "docker network inspect kind || docker network create --subnet=172.40.0.0/16 kind",
