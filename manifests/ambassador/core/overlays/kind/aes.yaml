@@ -15,7 +15,7 @@ apiVersion: getambassador.io/v2
 kind: Mapping
 metadata:
   name: argocd-server-ui
-  namespace: argocd
+  namespace: ambassador
   annotations:
     argocd.argoproj.io/compare-options: IgnoreExtraneous
     argocd.argoproj.io/sync-options: Prune=false
@@ -23,4 +23,4 @@ metadata:
 spec:
   host: argocd.gw.io
   prefix: /
-  service: https://argocd-server:443
+  service: https://argocd-server.argocd-server:443
