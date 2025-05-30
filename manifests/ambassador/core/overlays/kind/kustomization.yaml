@@ -128,7 +128,7 @@ patches:
             - update
   target:
     kind: ClusterRole
-    name: aes-edge-stack
+    name: edge-stack
 - patch: |-
     - op: replace
       path: /rules
@@ -186,4 +186,4 @@ patches:
             - patch
   target:
     kind: ClusterRole
-    name: aes-edge-stack-agent
+    name: edge-stack-agent
