@@ -1,6 +1,5 @@
 global:
   domain: argocd.apps.io
-
   logging:
     # -- Set the global logging level. One of: `debug`, `info`, `warn` or `error`
     level: debug
