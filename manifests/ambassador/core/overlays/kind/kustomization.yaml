@@ -6,8 +6,3 @@ patches:
 - target:
     kind: CustomResourceDefinition
   path: ../../../../../patches/patch-crds.yaml
-- target:
-    kind: CustomResourceDefinition
-  patch: |-
-    - op: remove
-      path: /spec/preserveUnknownFields
