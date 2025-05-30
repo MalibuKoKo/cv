@@ -6,17 +6,6 @@ emissary-ingress:
       metallb.universe.tf/loadBalancerIPs: 172.40.255.206
     # Note that target http ports need to match your ambassador configurations service_port
     # https://www.getambassador.io/reference/modules/#the-ambassador-module
-    ports:
-    - appProtocol: http
-      name: http
-      port: 80
-      protocol: TCP
-      targetPort: http #8080
-    - appProtocol: https
-      name: https
-      port: 443
-      protocol: TCP
-      targetPort: https #8443
   security:
     podSecurityContext:
       sysctls:
