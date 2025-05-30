@@ -129,3 +129,61 @@ patches:
   target:
     kind: ClusterRole
     name: aes-edge-stack
+- patch: |-
+    - op: replace
+      path: /rules
+      value:
+        - apiGroups:
+            - argoproj.io
+          resources:
+            - applications
+          verbs:
+            - get
+            - list
+            - watch
+        - apiGroups:
+            - ''
+          resources:
+            - configmaps
+          verbs:
+            - get
+            - list
+            - watch
+        - apiGroups:
+            - apps
+            - extensions
+          resources:
+            - deployments
+          verbs:
+            - get
+            - list
+            - watch
+        - apiGroups:
+            - ''
+          resources:
+            - endpoints
+          verbs:
+            - get
+            - list
+            - watch
+        - apiGroups:
+            - ''
+          resources:
+            - pods
+          verbs:
+            - get
+            - list
+            - watch
+        - apiGroups:
+            - argoproj.io
+          resources:
+            - rollouts
+            - rollouts/status
+          verbs:
+            - get
+            - list
+            - watch
+            - patch
+  target:
+    kind: ClusterRole
+    name: aes-edge-stack-agent
