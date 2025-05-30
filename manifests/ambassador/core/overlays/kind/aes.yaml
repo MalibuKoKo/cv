@@ -30,7 +30,7 @@ metadata:
   namespace: ambassador
   annotations:
 spec:
-  hostname: argocd.gw.io
+  hostname: edge.infra.lan
   requestPolicy:
     insecure:
       action: Route
@@ -55,6 +55,6 @@ spec:
 #     argocd.argoproj.io/sync-options: Prune=false
 #     argocd.argoproj.io/tracking-id: ambassador-core:getambassador.io/Mapping:argocd/argocd-server-ui
 # spec:
-#   host: argocd.gw.io
-#   prefix: /
+#   host: edge.infra.lan
+#   prefix: /argocd
 #   service: http://argocd-server.argocd-server:80

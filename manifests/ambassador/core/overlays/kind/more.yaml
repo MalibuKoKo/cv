@@ -1,0 +1,24 @@
+# ---
+# apiVersion: getambassador.io/v3alpha1
+# kind: TLSContext
+# metadata:
+#   name: argocd
+#   namespace: ambassador
+# spec:
+#   ca_secret: ca
+#   cert_required: true
+#   secret: ca
+---
+apiVersion: getambassador.io/v2
+kind: Mapping
+metadata:
+  name: argocd-server-ui
+  namespace: ambassador
+  annotations:
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
+    argocd.argoproj.io/sync-options: Prune=false
+    argocd.argoproj.io/tracking-id: ambassador-core:getambassador.io/Mapping:argocd/argocd-server-ui
+spec:
+  host: edge.infra.lan
+  prefix: /argocd
+  service: http://argocd-server.argocd-server:80
