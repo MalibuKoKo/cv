@@ -3,3 +3,4 @@ kind: Kustomization
 namespace: emissary-system
 resources:
 - https://app.getambassador.io/yaml/edge-stack/3.12.4/aes-crds.yaml
+- rbac.yaml
