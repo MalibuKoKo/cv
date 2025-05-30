@@ -29,22 +29,32 @@ metadata:
   name: argocd
   namespace: ambassador
   annotations:
-    argocd.argoproj.io/compare-options: IgnoreExtraneous
-    argocd.argoproj.io/sync-options: Prune=false
-    argocd.argoproj.io/tracking-id: ambassador-core:getambassador.io/Host:ambassador/argocd
 spec:
   hostname: argocd.gw.io
----
-apiVersion: getambassador.io/v2
-kind: Mapping
-metadata:
-  name: argocd-server-ui
-  namespace: ambassador
-  annotations:
-    argocd.argoproj.io/compare-options: IgnoreExtraneous
-    argocd.argoproj.io/sync-options: Prune=false
-    argocd.argoproj.io/tracking-id: ambassador-core:getambassador.io/Mapping:argocd/argocd-server-ui
-spec:
-  host: argocd.gw.io
-  prefix: /
-  service: https://argocd-server.argocd-server:443
+  requestPolicy:
+    insecure:
+      action: Route
+# ---
+# apiVersion: getambassador.io/v3alpha1
+# kind: TLSContext
+# metadata:
+#   name: argocd
+#   namespace: ambassador
+# spec:
+#   ca_secret: ca
+#   cert_required: true
+#   secret: ca
+# ---
+# apiVersion: getambassador.io/v2
+# kind: Mapping
+# metadata:
+#   name: argocd-server-ui
+#   namespace: ambassador
+#   annotations:
+#     argocd.argoproj.io/compare-options: IgnoreExtraneous
+#     argocd.argoproj.io/sync-options: Prune=false
+#     argocd.argoproj.io/tracking-id: ambassador-core:getambassador.io/Mapping:argocd/argocd-server-ui
+# spec:
+#   host: argocd.gw.io
+#   prefix: /
+#   service: http://argocd-server.argocd-server:80
