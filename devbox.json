@@ -58,11 +58,12 @@
     "kcl@0.11.1",
     "ngrok@3.19.1",
     "mkcert@1.4.4",
-    "nssTools@3.101.2"
+    "nssTools@3.101.2",
+    "argocd@latest"
   ],
   "env": {
     "KUBECONFIG": "/tmp/.kube/config",
-    "CAROOT": "$PWD/manifests/ingress-nginx/core/overlays/kind/ca"
+    "CAROOT":     "$PWD/manifests/ingress-nginx/core/overlays/kind/ca"
   },
   "shell": {
     "init_hook": [
@@ -70,6 +71,7 @@
       "hostctl list domains demo edge.infra.lan   --out json | jq -e '.[] | select(.IP == \"172.40.255.206\" and .Status == \"on\")' || sudo hostctl add domains demo edge.infra.lan   --ip 172.40.255.206",
       "mkcert -install",
       "[ -f manifests/ingress-nginx/core/overlays/kind/tls/tls.crt ] || mkcert -cert-file manifests/ingress-nginx/core/overlays/kind/tls/tls.crt -key-file manifests/ingress-nginx/core/overlays/kind/tls/tls.key apps.io '*.apps.io' 172.40.255.205",
+      "[ -f manifests/ambassador/core/overlays/kind/tls/tls.crt ] || mkcert -cert-file manifests/ambassador/core/overlays/kind/tls/tls.crt -key-file manifests/ambassador/core/overlays/kind/tls/tls.key infra.lan '*.infra.lan' 172.40.255.206",
       "docker network inspect kind || docker network create --subnet=172.40.0.0/16 kind",
       "kind get clusters | grep -q \"^demo$\" || kind create cluster --name demo --config bootstrap/overlays/kind/config.yaml",
       "kubectl config get-clusters | grep -q \"^kind-demo$\" || kind export kubeconfig --name demo",

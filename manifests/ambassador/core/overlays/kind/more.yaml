@@ -20,5 +20,6 @@ metadata:
     argocd.argoproj.io/tracking-id: ambassador-core:getambassador.io/Mapping:argocd/argocd-server-ui
 spec:
   host: edge.infra.lan
-  prefix: /argocd
-  service: http://argocd-server.argocd-server:80
+  prefix: /argo-cd
+  rewrite: /argo-cd
+  service: http://argocd-server.argocd:80

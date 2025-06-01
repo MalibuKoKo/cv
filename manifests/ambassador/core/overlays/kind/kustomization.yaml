@@ -4,6 +4,16 @@ generators:
 - ../../base/helm-chart.yaml
 resources:
 - aes.yaml
+secretGenerator:
+- name: default-cert
+  namespace: ambassador
+  type: kubernetes.io/tls
+  files:
+    - tls/tls.crt
+    - tls/tls.key
+    - ca/ca.crt
+  options:
+    disableNameSuffixHash: true
 patches:
 - patch: |-
     - op: replace
