@@ -13,3 +13,12 @@ server:
 configs:
   secret:
     argocdServerAdminPassword: "$2a$10$6ZsSd4LcJiyJCwAa/G1Yg.MSyJTKHire1ubRZoWSfZex0n4bNneZi"
+  params:
+    ## Server properties
+    # -- Run server without TLS
+    ## NOTE: This value should be set when you generate params by other means as it changes ports used by ingress template.
+    server.insecure: true
+    # -- Value for base href in index.html. Used if Argo CD is running behind reverse proxy under subpath different from /
+    server.basehref: /argo-cd
+    # -- Used if Argo CD is running behind reverse proxy under subpath different from /
+    server.rootpath: /argo-cd
