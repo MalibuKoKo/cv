@@ -4,10 +4,32 @@
 # metadata:
 #   name: argocd
 #   namespace: ambassador
+#   annotations:
+#     argocd.argoproj.io/compare-options: IgnoreExtraneous
+#     argocd.argoproj.io/sync-options: Prune=false
+#     argocd.argoproj.io/tracking-id: ambassador-core:getambassador.io/TLSContext:ambassador/argocd
 # spec:
-#   ca_secret: ca
-#   cert_required: true
-#   secret: ca
+#   secret: default-cert
+#   hosts:
+#   # - '*'
+#   - '*.infra.lan'
+#   - 'edge.infra.lan'
+#   # ca_secret: ca
+#   # cert_required: true
+---
+apiVersion: getambassador.io/v3alpha1
+kind: Host
+metadata:
+  name: argocd
+  annotations:
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
+    argocd.argoproj.io/sync-options: Prune=false
+    argocd.argoproj.io/tracking-id: ambassador-core:getambassador.io/Host:ambassador/argocd
+spec:
+  hostname: edge.infra.lan
+  requestPolicy:
+    insecure:
+      action: Route
 ---
 apiVersion: getambassador.io/v2
 kind: Mapping
@@ -17,9 +39,32 @@ metadata:
   annotations:
     argocd.argoproj.io/compare-options: IgnoreExtraneous
     argocd.argoproj.io/sync-options: Prune=false
-    argocd.argoproj.io/tracking-id: ambassador-core:getambassador.io/Mapping:argocd/argocd-server-ui
+    argocd.argoproj.io/tracking-id: ambassador-core:getambassador.io/Mapping:ambassador/argocd-server-ui
 spec:
   host: edge.infra.lan
   prefix: /argo-cd
   rewrite: /argo-cd
   service: http://argocd-server.argocd:80
+  docs:
+    display_name: argocd
+    path: /argo-cd
+    url: http://argocd-server.argocd:80/argo-cd/swagger.json
+    timeout_ms: 100000
+    ignored: false
+# ---
+# apiVersion: getambassador.io/v3alpha1
+# kind:  DevPortal
+# metadata:
+#   name: devportal
+#   namespace: ambassador
+#   annotations:
+#     argocd.argoproj.io/compare-options: IgnoreExtraneous
+#     argocd.argoproj.io/sync-options: Prune=false
+#     argocd.argoproj.io/tracking-id: ambassador-core:getambassador.io/DevPortal:ambassador/devportal
+# spec:
+#   # content: {{- .Values.devportal.content | toYaml | nindent 4 }}
+#   naming_scheme: namespace.name
+#   preserve_servers: false
+#   search:
+#     enabled: true
+#     type: all-content 

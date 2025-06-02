@@ -22,16 +22,16 @@ spec:
   port: 443
   protocol: HTTPS
   securityModel: XFP
----
-apiVersion: getambassador.io/v3alpha1
-kind: Host
-metadata:
-  name: argocd
-spec:
-  hostname: edge.infra.lan
-  requestPolicy:
-    insecure:
-      action: Route
+# ---
+# apiVersion: getambassador.io/v3alpha1
+# kind: Host
+# metadata:
+#   name: argocd
+# spec:
+#   hostname: edge.infra.lan
+#   requestPolicy:
+#     insecure:
+#       action: Route
 # ---
 # apiVersion: getambassador.io/v2
 # kind: Mapping
