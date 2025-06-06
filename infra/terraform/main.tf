@@ -21,13 +21,13 @@ locals {
 ################################################################################
 # Account
 ################################################################################
-resource "aws_organizations_account" "free_tier" {
-  name      = local.name
-  email     = var.email # Doit être unique
-  role_name = "OrganizationAccountAccessRole"
-  iam_user_access_to_billing = "ALLOW"
-  provider  = aws.org
-}
+# resource "aws_organizations_account" "free_tier" {
+#   name      = local.name
+#   email     = var.email # Doit être unique
+#   role_name = "OrganizationAccountAccessRole"
+#   iam_user_access_to_billing = "ALLOW"
+#   provider  = aws.org
+# }
 
 ################################################################################
 # Availability zones
@@ -39,43 +39,43 @@ data "aws_availability_zones" "available" {
 ################################################################################
 # VPC
 ################################################################################
-module "vpc" {
-  providers = { aws = aws.freetier }
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 5.0"
-  tags = local.tags
+# module "vpc" {
+#   providers = { aws = aws.freetier }
+#   source  = "terraform-aws-modules/vpc/aws"
+#   version = "~> 5.0"
+#   tags = local.tags
 
-  name = local.name
-  cidr = local.vpc_cidr
+#   name = local.name
+#   cidr = local.vpc_cidr
 
-  azs             = local.azs
-  public_subnets  = local.public_subnets
-}
+#   azs             = local.azs
+#   public_subnets  = local.public_subnets
+# }
 
 ################################################################################
 # ECS Cluster
 ################################################################################
-module "ecs_cluster" {
-  providers = { aws = aws.freetier }
-  source  = "terraform-aws-modules/ecs/aws"
-  version = "~> 5.0"
-  tags = local.tags
+# module "ecs_cluster" {
+#   providers = { aws = aws.freetier }
+#   source  = "terraform-aws-modules/ecs/aws"
+#   version = "~> 5.0"
+#   tags = local.tags
 
-  cluster_name = local.name
+#   cluster_name = local.name
 
-  # Capacity provider
-  fargate_capacity_providers = {
-    FARGATE_SPOT = {
-      default_capacity_provider_strategy = {
-        weight = 1
-        base   = 0
-      }
-    }
-  }
+#   # Capacity provider
+#   fargate_capacity_providers = {
+#     FARGATE_SPOT = {
+#       default_capacity_provider_strategy = {
+#         weight = 1
+#         base   = 0
+#       }
+#     }
+#   }
 
-  # Désactive les options coûteuses
-  create_cloudwatch_log_group = false
-}
+#   # Désactive les options coûteuses
+#   create_cloudwatch_log_group = false
+# }
 
 ################################################################################
 # Service
