@@ -80,227 +80,227 @@ module "ecs_cluster" {
 ################################################################################
 # Service
 ################################################################################
-module "ecs_service" {
-  providers = { aws = aws.freetier }
-  source  = "terraform-aws-modules/ecs/aws//modules/service"
-  version = "~> 5.0"
-  tags = local.tags
+# module "ecs_service" {
+#   providers = { aws = aws.freetier }
+#   source  = "terraform-aws-modules/ecs/aws//modules/service"
+#   version = "~> 5.0"
+#   tags = local.tags
 
-  name        = local.container_name
-  cluster_arn = module.ecs_cluster.cluster_arn
-  cpu    = 256
-  memory = 512
-  assign_public_ip   = true
-  launch_type = "FARGATE"
-  desired_count = 1
-  deployment_maximum_percent         = 100
-  deployment_minimum_healthy_percent = 0
-  capacity_provider_strategy = [{capacity_provider = "FARGATE_SPOT", weight = 1, base = 0}]
-  subnet_ids = module.vpc.public_subnets
-  security_group_rules = {
-    http_in = {
-      type                     = "ingress"
-      from_port                = local.host_port
-      to_port                  = local.container_port
-      protocol                 = "tcp"
-      cidr_blocks              = ["0.0.0.0/0"]
-      description              = "Allow HTTP from anywhere"
-    }
-    https_in = {
-      type        = "ingress"
-      from_port   = 443
-      to_port     = 443
-      protocol    = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
-      description = "Allow HTTPS from anywhere"
-    }
-    egress_all = {
-      type        = "egress"
-      from_port   = 0
-      to_port     = 0
-      protocol    = "-1"
-      cidr_blocks = ["0.0.0.0/0"]
-    }
-  }  
+#   name        = local.container_name
+#   cluster_arn = module.ecs_cluster.cluster_arn
+#   cpu    = 256
+#   memory = 512
+#   assign_public_ip   = true
+#   launch_type = "FARGATE"
+#   desired_count = 1
+#   deployment_maximum_percent         = 100
+#   deployment_minimum_healthy_percent = 0
+#   capacity_provider_strategy = [{capacity_provider = "FARGATE_SPOT", weight = 1, base = 0}]
+#   subnet_ids = module.vpc.public_subnets
+#   security_group_rules = {
+#     http_in = {
+#       type                     = "ingress"
+#       from_port                = local.host_port
+#       to_port                  = local.container_port
+#       protocol                 = "tcp"
+#       cidr_blocks              = ["0.0.0.0/0"]
+#       description              = "Allow HTTP from anywhere"
+#     }
+#     https_in = {
+#       type        = "ingress"
+#       from_port   = 443
+#       to_port     = 443
+#       protocol    = "tcp"
+#       cidr_blocks = ["0.0.0.0/0"]
+#       description = "Allow HTTPS from anywhere"
+#     }
+#     egress_all = {
+#       type        = "egress"
+#       from_port   = 0
+#       to_port     = 0
+#       protocol    = "-1"
+#       cidr_blocks = ["0.0.0.0/0"]
+#     }
+#   }  
 
-  enable_execute_command = false #true
-  container_definitions = {
-    (local.container_name) = {
-      name = local.container_name
-      essential = true
-      image     = "${var.image}:${file("${path.module}/../../VERSION")}"
-      port_mappings = [
-        {
-          name          = local.container_name
-          containerPort = local.container_port
-          hostPort      = local.host_port
-          protocol      = "tcp"
-        },
-        {
-          name          = "https"
-          containerPort = 443
-          hostPort      = 443
-          protocol      = "tcp"
-        }
-      ]
-      readonly_root_filesystem = false
-      enable_cloudwatch_logging = false
-    }
-    dns-updater = {
-      name = "dns-updater"
-      essential = false
-      image     = "docker.io/curlimages/curl:latest"
-      enable_cloudwatch_logging = false
-      dependencies = [{
-        containerName = local.container_name
-        condition     = "START"
-      }]
-      environment = [
-        {
-          name  = "HOSTINGER_TOKEN",
-          value = var.hostinger_token
-        },
-        {
-          name  = "DOMAIN_NAME",
-          value = var.domain_name
-        },
-        {
-          name  = "DNS_RECORD_A",
-          value = var.dns_record_a
-        }
-      ]
-      command   = [
-        "sh", "-c",
-        <<-EOT
-          echo "Attente de NGINX...";
-          until curl -s http://localhost:80 > /dev/null; do
-            sleep 1;
-          done;
-          echo "NGINX est prêt. Mise à jour DNS...";
-          PUBLIC_IP=$(curl -s https://checkip.amazonaws.com);
-          set -x;
-          curl -s https://developers.hostinger.com/api/dns/v1/zones/$${DOMAIN_NAME} --request PUT --header 'Content-Type: application/json' --header "Authorization: Bearer $${HOSTINGER_TOKEN}" --data "{\"overwrite\":true,\"zone\":[{\"name\":\"$${DNS_RECORD_A}\",\"records\":[{\"content\":\"$${PUBLIC_IP}\"}],\"ttl\": 60,\"type\":\"A\"}]}";
-        EOT
-      ]
-    }
-  }
+#   enable_execute_command = false #true
+#   container_definitions = {
+#     (local.container_name) = {
+#       name = local.container_name
+#       essential = true
+#       image     = "${var.image}:${file("${path.module}/../../VERSION")}"
+#       port_mappings = [
+#         {
+#           name          = local.container_name
+#           containerPort = local.container_port
+#           hostPort      = local.host_port
+#           protocol      = "tcp"
+#         },
+#         {
+#           name          = "https"
+#           containerPort = 443
+#           hostPort      = 443
+#           protocol      = "tcp"
+#         }
+#       ]
+#       readonly_root_filesystem = false
+#       enable_cloudwatch_logging = false
+#     }
+#     dns-updater = {
+#       name = "dns-updater"
+#       essential = false
+#       image     = "docker.io/curlimages/curl:latest"
+#       enable_cloudwatch_logging = false
+#       dependencies = [{
+#         containerName = local.container_name
+#         condition     = "START"
+#       }]
+#       environment = [
+#         {
+#           name  = "HOSTINGER_TOKEN",
+#           value = var.hostinger_token
+#         },
+#         {
+#           name  = "DOMAIN_NAME",
+#           value = var.domain_name
+#         },
+#         {
+#           name  = "DNS_RECORD_A",
+#           value = var.dns_record_a
+#         }
+#       ]
+#       command   = [
+#         "sh", "-c",
+#         <<-EOT
+#           echo "Attente de NGINX...";
+#           until curl -s http://localhost:80 > /dev/null; do
+#             sleep 1;
+#           done;
+#           echo "NGINX est prêt. Mise à jour DNS...";
+#           PUBLIC_IP=$(curl -s https://checkip.amazonaws.com);
+#           set -x;
+#           curl -s https://developers.hostinger.com/api/dns/v1/zones/$${DOMAIN_NAME} --request PUT --header 'Content-Type: application/json' --header "Authorization: Bearer $${HOSTINGER_TOKEN}" --data "{\"overwrite\":true,\"zone\":[{\"name\":\"$${DNS_RECORD_A}\",\"records\":[{\"content\":\"$${PUBLIC_IP}\"}],\"ttl\": 60,\"type\":\"A\"}]}";
+#         EOT
+#       ]
+#     }
+#   }
 
-  runtime_platform = {
-    cpu_architecture        = "ARM64"
-    operating_system_family = "LINUX"
-  }
+#   runtime_platform = {
+#     cpu_architecture        = "ARM64"
+#     operating_system_family = "LINUX"
+#   }
 
-  create_tasks_iam_role = false
-  tasks_iam_role_arn = aws_iam_role.ecs_task.arn
-}
+#   create_tasks_iam_role = false
+#   tasks_iam_role_arn = aws_iam_role.ecs_task.arn
+# }
 
-resource "aws_ssm_parameter" "cert" {
-  provider  = aws.freetier
-  name        = "/${local.container_name}/cert"
-  type        = "SecureString"  # chiffrement KMS automatique géré par AWS
-  description = "Certificat SSL pour ${local.container_name}"
-  value       = file("certs/archive/${var.dns_record_a}.${var.domain_name}/fullchain1.pem")  # chemin vers ton certificat local
-  tags        = local.tags
-}
+# resource "aws_ssm_parameter" "cert" {
+#   provider  = aws.freetier
+#   name        = "/${local.container_name}/cert"
+#   type        = "SecureString"  # chiffrement KMS automatique géré par AWS
+#   description = "Certificat SSL pour ${local.container_name}"
+#   value       = file("certs/archive/${var.dns_record_a}.${var.domain_name}/fullchain1.pem")  # chemin vers ton certificat local
+#   tags        = local.tags
+# }
 
-resource "aws_ssm_parameter" "key" {
-  provider    = aws.freetier
-  name        = "/${local.container_name}/key"
-  type        = "SecureString"
-  description = "Clé privée SSL pour ${local.container_name}"
-  value       = file("certs/archive/${var.dns_record_a}.${var.domain_name}/privkey1.pem")  # chemin vers ta clé privée locale
-  tags        = local.tags
-}
+# resource "aws_ssm_parameter" "key" {
+#   provider    = aws.freetier
+#   name        = "/${local.container_name}/key"
+#   type        = "SecureString"
+#   description = "Clé privée SSL pour ${local.container_name}"
+#   value       = file("certs/archive/${var.dns_record_a}.${var.domain_name}/privkey1.pem")  # chemin vers ta clé privée locale
+#   tags        = local.tags
+# }
 
-resource "aws_ssm_parameter" "dummy_cert" {
-  provider  = aws.freetier
-  name        = "/dummy/cert"
-  type        = "SecureString"  # chiffrement KMS automatique géré par AWS
-  description = "Certificat SSL pour dummy"
-  value       = file("certs/archive/dummy/fullchain.pem")  # chemin vers ton certificat local
-  tags        = local.tags
-}
+# resource "aws_ssm_parameter" "dummy_cert" {
+#   provider  = aws.freetier
+#   name        = "/dummy/cert"
+#   type        = "SecureString"  # chiffrement KMS automatique géré par AWS
+#   description = "Certificat SSL pour dummy"
+#   value       = file("certs/archive/dummy/fullchain.pem")  # chemin vers ton certificat local
+#   tags        = local.tags
+# }
 
-resource "aws_ssm_parameter" "dummy_key" {
-  provider    = aws.freetier
-  name        = "/dummy/key"
-  type        = "SecureString"
-  description = "Clé privée SSL pour dummy"
-  value       = file("certs/archive/dummy/privkey.pem")  # chemin vers ta clé privée locale
-  tags        = local.tags
-}
+# resource "aws_ssm_parameter" "dummy_key" {
+#   provider    = aws.freetier
+#   name        = "/dummy/key"
+#   type        = "SecureString"
+#   description = "Clé privée SSL pour dummy"
+#   value       = file("certs/archive/dummy/privkey.pem")  # chemin vers ta clé privée locale
+#   tags        = local.tags
+# }
 
-resource "aws_iam_role" "ecs_task" {
-  provider    = aws.freetier
-  name = "ecs-task-role-myservice"
+# resource "aws_iam_role" "ecs_task" {
+#   provider    = aws.freetier
+#   name = "ecs-task-role-myservice"
 
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Condition = {
-          ArnLike = {
-            "aws:SourceArn" = "arn:aws:ecs:${local.region}:${data.aws_caller_identity.current.account_id}:*"
-          }
-          StringEquals = {
-             "aws:SourceAccount" = "${data.aws_caller_identity.current.account_id}"
-          }
-        }
-        Effect = "Allow"
-        Principal = {
-          Service = "ecs-tasks.amazonaws.com"
-        }
-        Sid       = "ECSTasksAssumeRole"
-      }
-    ]
-  })
-}
+#   assume_role_policy = jsonencode({
+#     Version = "2012-10-17"
+#     Statement = [
+#       {
+#         Action = "sts:AssumeRole"
+#         Condition = {
+#           ArnLike = {
+#             "aws:SourceArn" = "arn:aws:ecs:${local.region}:${data.aws_caller_identity.current.account_id}:*"
+#           }
+#           StringEquals = {
+#              "aws:SourceAccount" = "${data.aws_caller_identity.current.account_id}"
+#           }
+#         }
+#         Effect = "Allow"
+#         Principal = {
+#           Service = "ecs-tasks.amazonaws.com"
+#         }
+#         Sid       = "ECSTasksAssumeRole"
+#       }
+#     ]
+#   })
+# }
 
-data "aws_caller_identity" "current" {
-  provider    = aws.freetier
-}
+# data "aws_caller_identity" "current" {
+#   provider    = aws.freetier
+# }
 
-resource "aws_iam_policy" "ecs_task_ssm_policy" {
-  provider    = aws.freetier
-  name = "ecs-task-ssm-access"
+# resource "aws_iam_policy" "ecs_task_ssm_policy" {
+#   provider    = aws.freetier
+#   name = "ecs-task-ssm-access"
 
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "ssm:GetParameter",
-          "ssm:GetParameters"
-        ]
-        Resource = [
-          "arn:aws:ssm:${local.region}:${data.aws_caller_identity.current.account_id}:parameter/${local.container_name}/cert",
-          "arn:aws:ssm:${local.region}:${data.aws_caller_identity.current.account_id}:parameter/${local.container_name}/key",
-          "arn:aws:ssm:${local.region}:${data.aws_caller_identity.current.account_id}:parameter/dummy/cert",
-          "arn:aws:ssm:${local.region}:${data.aws_caller_identity.current.account_id}:parameter/dummy/key"
-        ]
-      },
-      {
-        Effect = "Allow"
-        Action = [
-          "ssm:StartSession",
-          "ssm:SendCommand",
-          "ssm:DescribeSessions",
-          "ssm:GetConnectionStatus",
-          "ssmmessages:CreateControlChannel",
-          "ssmmessages:CreateDataChannel",
-          "ssmmessages:OpenControlChannel",
-          "ssmmessages:OpenDataChannel"
-        ]
-        Resource = "*"
-      }
-    ]
-  })
-}
+#   policy = jsonencode({
+#     Version = "2012-10-17"
+#     Statement = [
+#       {
+#         Effect = "Allow"
+#         Action = [
+#           "ssm:GetParameter",
+#           "ssm:GetParameters"
+#         ]
+#         Resource = [
+#           "arn:aws:ssm:${local.region}:${data.aws_caller_identity.current.account_id}:parameter/${local.container_name}/cert",
+#           "arn:aws:ssm:${local.region}:${data.aws_caller_identity.current.account_id}:parameter/${local.container_name}/key",
+#           "arn:aws:ssm:${local.region}:${data.aws_caller_identity.current.account_id}:parameter/dummy/cert",
+#           "arn:aws:ssm:${local.region}:${data.aws_caller_identity.current.account_id}:parameter/dummy/key"
+#         ]
+#       },
+#       {
+#         Effect = "Allow"
+#         Action = [
+#           "ssm:StartSession",
+#           "ssm:SendCommand",
+#           "ssm:DescribeSessions",
+#           "ssm:GetConnectionStatus",
+#           "ssmmessages:CreateControlChannel",
+#           "ssmmessages:CreateDataChannel",
+#           "ssmmessages:OpenControlChannel",
+#           "ssmmessages:OpenDataChannel"
+#         ]
+#         Resource = "*"
+#       }
+#     ]
+#   })
+# }
 
-resource "aws_iam_role_policy_attachment" "ecs_task_ssm_attach" {
-  provider    = aws.freetier
-  role       = aws_iam_role.ecs_task.name
-  policy_arn = aws_iam_policy.ecs_task_ssm_policy.arn
-}
+# resource "aws_iam_role_policy_attachment" "ecs_task_ssm_attach" {
+#   provider    = aws.freetier
+#   role       = aws_iam_role.ecs_task.name
+#   policy_arn = aws_iam_policy.ecs_task_ssm_policy.arn
+# }
