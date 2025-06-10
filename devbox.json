@@ -67,6 +67,7 @@
   },
   "shell": {
     "init_hook": [
+      "git submodule update --recursive --init",
       "hostctl list domains demo argocd.apps.io --out json | jq -e '.[] | select(.IP == \"172.40.255.205\" and .Status == \"on\")' || sudo $DEVBOX_PACKAGES_DIR/bin/hostctl add domains demo argocd.apps.io --ip 172.40.255.205",
       "hostctl list domains demo edge.infra.lan   --out json | jq -e '.[] | select(.IP == \"172.40.255.206\" and .Status == \"on\")' || sudo $DEVBOX_PACKAGES_DIR/bin/hostctl add domains demo edge.infra.lan   --ip 172.40.255.206",
       "mkcert -install",
