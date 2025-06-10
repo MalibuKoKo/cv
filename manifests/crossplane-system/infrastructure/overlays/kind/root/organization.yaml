@@ -1,0 +1,14 @@
+apiVersion: organizations.aws.upbound.io/v1beta1
+kind: Organization
+metadata:
+  name: demo
+  annotations:
+    crossplane.io/external-name: o-5wnyc8w6ge
+    argocd.argoproj.io/tracking-id: crossplane-system-infrastructure:/Organization:crossplane-system/demo
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
+    argocd.argoproj.io/sync-options: Prune=false
+spec:
+  forProvider:
+    region: eu-west-3
+  providerConfigRef:
+    name: default
