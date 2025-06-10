@@ -9,7 +9,7 @@
   value: Automatic
 - op: add
   path: /spec/revisionHistoryLimit
-  value: 1
+  value: 5
 - op: add
   path: /spec/runtimeConfigRef
   value:
