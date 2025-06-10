@@ -13,6 +13,6 @@ spec:
     email: "aws-demo-176432.compacted698@passinbox.com"
     name: demo-176432
     closeOnDeletion: true
-    parentId: o-5wnyc8w6ge
+    parentId: r-501c
   providerConfigRef:
     name: default
