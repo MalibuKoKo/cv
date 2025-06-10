@@ -8,7 +8,12 @@ metadata:
     argocd.argoproj.io/compare-options: IgnoreExtraneous
     argocd.argoproj.io/sync-options: Prune=false
 spec:
+  deletionPolicy: Delete # Orphan
   forProvider:
+    featureSet: ALL
     region: eu-west-3
+  initProvider: {}
+  managementPolicies:
+    - '*'
   providerConfigRef:
     name: default
