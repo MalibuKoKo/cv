@@ -4,3 +4,5 @@ namespace: crossplane-system
 resources:
 - root/organization.yaml
 - account.yaml
+- ../../base/crossplane-kubernetes/package/definition.yaml
+- ../../base/crossplane-kubernetes/package/compositions.yaml

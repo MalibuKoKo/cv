@@ -4,9 +4,6 @@ metadata:
   name: demo
   annotations:
     crossplane.io/external-name: '322872274774'
-    argocd.argoproj.io/tracking-id: crossplane-system-infrastructure:/Account:crossplane-system/demo
-    argocd.argoproj.io/compare-options: IgnoreExtraneous
-    argocd.argoproj.io/sync-options: Prune=false
 spec:
   forProvider:
     region: eu-west-3
