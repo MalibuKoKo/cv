@@ -2,18 +2,33 @@ apiVersion: devopstoolkitseries.com/v1alpha1
 kind: ClusterClaim
 metadata:
   name: demo
+  annotations:
+    # crossplane.io/external-name: "controlplane"
+    argocd.argoproj.io/tracking-id: crossplane-system-infrastructure:/ClusterClaim:crossplane-system/demo
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
+    argocd.argoproj.io/sync-options: Prune=false
 spec:
-  id: demo
+  id: demo # providerConfigRefName
   compositionSelector:
     matchLabels:
       provider: aws
       cluster: eks
   parameters:
+    apps:
+      argocd:
+        enabled: false
+      crossplane:
+        enabled: false
+      dapr:
+        enabled: false
+      externalSecrets:
+        enabled: false
+      openfunction:
+        enabled: false
+      traefik:
+        enabled: true
     nodeSize: small
     minNodeCount: 1
     usage:
       enabled: true
     version: "1.30"
-    apps:
-      traefik:
-        enabled: false
