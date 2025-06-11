@@ -16,4 +16,4 @@ spec:
     version: "1.30"
     apps:
       traefik:
-        enabled: true
+        enabled: false
