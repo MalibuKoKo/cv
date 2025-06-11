@@ -3,4 +3,4 @@ kind: Kustomization
 namespace: crossplane-system
 resources:
 - root/organization.yaml
-- root/account.yaml
+- account.yaml

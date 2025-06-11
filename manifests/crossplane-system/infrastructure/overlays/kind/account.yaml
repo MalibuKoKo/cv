@@ -3,7 +3,7 @@ kind: Account
 metadata:
   name: demo
   annotations:
-    # crossplane.io/external-name: ""
+    crossplane.io/external-name: '322872274774'
     argocd.argoproj.io/tracking-id: crossplane-system-infrastructure:/Account:crossplane-system/demo
     argocd.argoproj.io/compare-options: IgnoreExtraneous
     argocd.argoproj.io/sync-options: Prune=false
@@ -13,27 +13,24 @@ spec:
     email: "aws-demo-176432.compacted698@passinbox.com"
     name: demo-176432
     closeOnDeletion: true
+    parentId: r-501c
   providerConfigRef:
     name: default
-# ---
-# apiVersion: aws.upbound.io/v1beta1
-# kind: ProviderConfig
-# metadata:
-#   name: demo
-#   annotations:
-#     argocd.argoproj.io/tracking-id: crossplane-system-infrastructure:/ProviderConfig:crossplane-system/demo
-#     argocd.argoproj.io/compare-options: IgnoreExtraneous
-#     argocd.argoproj.io/sync-options: Prune=false
-# spec:
-#   # same as default's ProviderConfig
-#   credentials:
-#     source: Secret
-#     secretRef:
-#       namespace: crossplane-system
-#       name: aws-org-admin
-#       key: creds
-#   assumeRoleChain:
-#   - roleARN: arn:aws:iam::1234567890:role/OrganizationAccountAccessRole
+---
+apiVersion: aws.upbound.io/v1beta1
+kind: ProviderConfig
+metadata:
+  name: demo
+spec:
+  # same as default's ProviderConfig
+  credentials:
+    source: Secret
+    secretRef:
+      key: creds
+      name: aws-org-admin
+      namespace: crossplane-system
+  assumeRoleChain:
+  - roleARN: arn:aws:iam::322872274774:role/OrganizationAccountAccessRole
 # ---
 # apiVersion: iam.aws.upbound.io/v1beta1
 # kind: Role
