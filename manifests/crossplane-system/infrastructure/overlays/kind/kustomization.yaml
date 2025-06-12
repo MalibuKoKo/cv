@@ -7,16 +7,16 @@ resources:
 - ../../base/crossplane-kubernetes/package/definition.yaml
 - ../../base/crossplane-kubernetes/package/compositions.yaml
 # - ../../base/crossplane-kubernetes/providers/function-kcl.yaml
-patches:
-  - patch: |-
-      $patch: delete
-      apiVersion: apiextensions.crossplane.io/v1
-      kind: Composition
-      metadata:
-        name: cluster-azure
-  - patch: |-
-      $patch: delete
-      apiVersion: apiextensions.crossplane.io/v1
-      kind: Composition
-      metadata:
-        name: cluster-google
+# patches:
+#   - patch: |-
+#       $patch: delete
+#       apiVersion: apiextensions.crossplane.io/v1
+#       kind: Composition
+#       metadata:
+#         name: cluster-azure
+#   - patch: |-
+#       $patch: delete
+#       apiVersion: apiextensions.crossplane.io/v1
+#       kind: Composition
+#       metadata:
+#         name: cluster-google
