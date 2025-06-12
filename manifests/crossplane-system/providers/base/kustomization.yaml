@@ -2,9 +2,10 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: crossplane-system
 resources:
-# - aws/crossplane/account.yaml
-- aws/crossplane/iam.yaml
 - aws/crossplane/organizations.yaml
+- aws/crossplane/eks.yaml
+- aws/crossplane/iam.yaml
+- aws/crossplane/ec2.yaml
 patches:
 - target:
     kind: Provider
