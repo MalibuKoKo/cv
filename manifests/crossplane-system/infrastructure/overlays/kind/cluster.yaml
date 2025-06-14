@@ -32,3 +32,8 @@ spec:
     usage:
       enabled: true
     version: "1.30"
+    region: eu-west-3
+    zones: 
+    - eu-west-3a
+    - eu-west-3b
+    - eu-west-3c

@@ -59,7 +59,8 @@
     "ngrok@3.19.1",
     "mkcert@1.4.4",
     "nssTools@3.101.2",
-    "argocd@latest"
+    "argocd@latest",
+    "just@1.40.0"
   ],
   "env": {
     "KUBECONFIG": "/tmp/.kube/config",
