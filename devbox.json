@@ -68,51 +68,41 @@
   },
   "shell": {
     "init_hook": [
-      "git submodule update --recursive --init",
-      "hostctl list domains demo argocd.apps.io --out json | jq -e '.[] | select(.IP == \"172.40.255.205\" and .Status == \"on\")' || sudo $DEVBOX_PACKAGES_DIR/bin/hostctl add domains demo argocd.apps.io --ip 172.40.255.205",
-      "hostctl list domains demo edge.infra.lan   --out json | jq -e '.[] | select(.IP == \"172.40.255.206\" and .Status == \"on\")' || sudo $DEVBOX_PACKAGES_DIR/bin/hostctl add domains demo edge.infra.lan   --ip 172.40.255.206",
-      "mkcert -install",
-      "[ -f manifests/ingress-nginx/core/overlays/kind/tls/tls.crt ] || mkcert -cert-file manifests/ingress-nginx/core/overlays/kind/tls/tls.crt -key-file manifests/ingress-nginx/core/overlays/kind/tls/tls.key apps.io '*.apps.io' 172.40.255.205",
-      "[ -f manifests/ambassador/core/overlays/kind/tls/tls.crt ] || mkcert -cert-file manifests/ambassador/core/overlays/kind/tls/tls.crt -key-file manifests/ambassador/core/overlays/kind/tls/tls.key infra.lan '*.infra.lan' 172.40.255.206",
-      "docker network inspect kind || docker network create --subnet=172.40.0.0/16 kind",
-      "kind get clusters | grep -q \"^demo$\" || kind create cluster --name demo --config bootstrap/overlays/kind/config.yaml",
-      "kubectl config get-clusters | grep -q \"^kind-demo$\" || kind export kubeconfig --name demo",
-      "kubectl config use-context kind-demo > /dev/null 2>&1",
-      "bootstrap/overlays/kind/start.sh",
-      "bootstrap/overlays/kind/creds.sh"
+      "if [ -n \"$ZSH_VERSION\" ]; then export SHELL_NAME=zsh; elif [ -n \"$BASH_VERSION\" ]; then export SHELL_NAME=bash;fi",
+      "source <(aws-vault --completion-script-$SHELL_NAME)",
+      "source <(chainsaw        completion    $SHELL_NAME)",
+      "source <(devbox          completion    $SHELL_NAME)",
+      "source <(docker          completion    $SHELL_NAME)",
+      "source <(glab            completion -s $SHELL_NAME)",
+      "source <(helm            completion    $SHELL_NAME)",
+      "source <(just          --completions   $SHELL_NAME)",
+      "source <(kcl             completion    $SHELL_NAME)",
+      "source <(k9s             completion    $SHELL_NAME)",
+      "source <(kind            completion    $SHELL_NAME)",
+      "source <(kluctl          completion    $SHELL_NAME)",
+      "source <(kn              completion    $SHELL_NAME)",
+      "source <(ko              completion    $SHELL_NAME)",
+      "source <(kube-bench      completion    $SHELL_NAME)",
+      "source <(kubebuilder     completion    $SHELL_NAME)",
+      "source <(kubecm          completion    $SHELL_NAME)",
+      "source <(kubectl         completion    $SHELL_NAME)",
+      "source <(kubepug         completion    $SHELL_NAME)",
+      "source <(kubescape       completion    $SHELL_NAME)",
+      "source <(kustomize       completion    $SHELL_NAME)",
+      "source <(kyverno         completion    $SHELL_NAME)",
+      "source <(oras            completion    $SHELL_NAME)",
+      "source <(tilt            completion    $SHELL_NAME)",
+      "alias k=kubectl",
+      "alias h=helm",
+      "complete -C 'aws_completer' aws",
+      "complete -F __start_kubectl k",
+      "complete -o default -F __start_helm h",
+      "function kb () { for i in \"$@\"; do if [[ -d $i/charts ]]; then rm -Rf $i/charts; fi; done && kustomize build --enable-helm --enable-alpha-plugins --load-restrictor LoadRestrictionsNone \"$@\"}"
     ],
     "scripts": {
-      "creds": [
-        "bootstrap/overlays/kind/creds.sh"
-      ],
-      "build": [
-        "echo $GHCR_PAT | docker login ghcr.io -u malibukoko --password-stdin",
-        "docker buildx use cv||docker buildx create --name cv --use",
-        "export DOCKER_TAG=$(cat VERSION)",
-        "docker buildx build --platform linux/amd64,linux/arm64 --secret id=maxmind_creds,src=build/maxmind_creds.txt -t ghcr.io/malibukoko/cv:${DOCKER_TAG} -f build/Dockerfile --push ."
-      ],
-      "certbot": [
-        "docker rm -f certbot-curl-base",
-        "docker run -it --name certbot-curl-base --entrypoint=sh certbot/certbot -c 'apk add --no-cache curl'",
-        "docker commit certbot-curl-base my-certbot-with-curl",
-        "domain=$(grep -Po 'dns_record_a\\s+=\\s+\"\\K([^\"]+)' infra/terraform.tfvars).$(grep -Po 'domain_name\\s+=\\s+\"\\K([^\"]+)' infra/terraform.tfvars)",
-        "email=$(grep -Po 'email\\s+=\\s+\"\\K([^\"]+)' infra/terraform.tfvars)",
-        "docker run -it --rm -e HOSTINGER_TOKEN=${HOSTINGER_TOKEN} --entrypoint=certbot --volume ./infra/certs:/tmp/config/letsencrypt --volume ./scripts/create-dns-txt.sh:/sbin/create-dns-txt.sh --user $(id -u):$(id -g) docker.io/library/my-certbot-with-curl:latest certonly --manual-auth-hook /sbin/create-dns-txt.sh --manual --preferred-challenges=dns --no-eff-email --agree-tos -m $email -d $domain --config-dir /tmp/config/letsencrypt --work-dir /tmp/work/letsencrypt --logs-dir /tmp/log/letsencrypt"
-      ],
-      "tfapply": [
-        "cd infra/terraform",
-        "terraform apply -auto-approve",
-        "cd ..",
-        "git add infra/terraform/terraform.tfstate*",
-        "git commit -m \"chore: mise à jour du fichiers terraform.tfstate*\""
-      ],
-      "bump": [
-        "git pull",
-        "git fetch --all --tags",
-        "cz bump --changelog --increment $(gum choose PATCH MINOR MAJOR)",
-        "git push origin $(git tag --sort v:refname | cat | tail -n 1)",
-        "git push origin"
-      ]
+      "start": ["just start"],
+      "stop":  ["just stop"],
+      "bump":  ["just bump"]
     }
   }
 }
