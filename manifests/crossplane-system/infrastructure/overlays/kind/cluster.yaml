@@ -26,7 +26,7 @@ spec:
       openfunction:
         enabled: false
       traefik:
-        enabled: true
+        enabled: false
     nodeSize: small
     minNodeCount: 1
     usage:
