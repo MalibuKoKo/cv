@@ -52,3 +52,16 @@ spec:
     url: http://argocd-server.argocd:80/argo-cd/swagger.json
     timeout_ms: 100000
     ignored: false  
+---
+apiVersion: getambassador.io/v2
+kind: Mapping
+metadata:
+  name: argocd-server-cli
+spec:
+  host: edge.infra.lan
+  prefix: /argo-cd
+  rewrite: /argo-cd
+  service: http://argocd-server.argocd:80
+  regex_headers:
+    Content-Type: "^application/grpc.*$"
+  grpc: true
