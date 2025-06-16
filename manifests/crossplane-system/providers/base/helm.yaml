@@ -13,11 +13,6 @@ metadata:
   name: crossplane-provider-helm
 spec:
   serviceAccountName: crossplane-provider-helm
-# ---
-# apiVersion: v1
-# kind: ServiceAccount
-# metadata:
-#   name: crossplane-provider-helm
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding

@@ -7,6 +7,7 @@ resources:
 - aws/crossplane/iam.yaml
 - aws/crossplane/ec2.yaml
 - helm.yaml
+- kubernetes.yaml
 patches:
 - target:
     kind: Provider
