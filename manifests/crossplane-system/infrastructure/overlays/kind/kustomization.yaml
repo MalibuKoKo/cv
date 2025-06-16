@@ -26,5 +26,5 @@ patches:
       name: crossplane-provider-helm
     patch: |-
       - op: replace
-        path: /metadata/annotations/crossplane-system-infrastructure
-        value: pkg.crossplane.io/ControllerConfig:crossplane-system/crossplane-provider-helm
+        path: /metadata/annotations/argocd.argoproj.io~1tracking-id
+        value: crossplane-system-infrastructure:pkg.crossplane.io/ControllerConfig:crossplane-system/crossplane-provider-helm
