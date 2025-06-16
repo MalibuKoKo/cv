@@ -45,7 +45,7 @@ spec:
   host: edge.infra.lan
   prefix: /argo-cd
   rewrite: /argo-cd
-  service: http://argocd-server.argocd:80
+  service: argocd-server.argocd:80
   regex_headers:
     Content-Type: "^(?!application/grpc).*"
   docs:
@@ -63,7 +63,7 @@ spec:
   host: edge.infra.lan
   prefix: /argo-cd
   rewrite: /argo-cd
-  service: http://argocd-server.argocd:80
+  service: argocd-server.argocd:443
   regex_headers:
     Content-Type: "^application/grpc.*$"
   grpc: true
