@@ -6,6 +6,7 @@ resources:
 - aws/crossplane/eks.yaml
 - aws/crossplane/iam.yaml
 - aws/crossplane/ec2.yaml
+- helm.yaml
 patches:
 - target:
     kind: Provider

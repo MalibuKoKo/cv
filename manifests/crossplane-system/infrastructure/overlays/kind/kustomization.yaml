@@ -6,7 +6,6 @@ resources:
 - account.yaml
 - ../../base/crossplane-kubernetes/package/definition.yaml
 - ../../base/crossplane-kubernetes/package/compositions.yaml
-# - ../../base/crossplane-kubernetes/providers/provider-helm-incluster.yaml
 patches:
   - patch: |-
       $patch: delete
