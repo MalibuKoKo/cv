@@ -21,3 +21,10 @@ patches:
       kind: Composition
       metadata:
         name: cluster-google
+  - target:
+      kind: ServiceAccount
+      name: crossplane-provider-helm
+    patch: |-
+      - op: replace
+        path: /metadata/annotations/crossplane-system-infrastructure
+        value: pkg.crossplane.io/ControllerConfig:crossplane-system/crossplane-provider-helm

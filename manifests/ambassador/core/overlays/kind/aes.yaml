@@ -46,8 +46,6 @@ spec:
   prefix: /argo-cd
   rewrite: /argo-cd
   service: argocd-server.argocd:80
-  # regex_headers:
-  #   Content-Type: "^(?!application/grpc).*"
   docs:
     display_name: argocd
     path: /argo-cd
