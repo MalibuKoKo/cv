@@ -13,8 +13,9 @@ global:
 configs:
   secret:
     argocdServerAdminPassword: "$2a$10$6ZsSd4LcJiyJCwAa/G1Yg.MSyJTKHire1ubRZoWSfZex0n4bNneZi"
-  cm:
-    server.session.duration: 24h
+    argocdServerAdminPasswordMtime: "2025-06-16T01:57:45Z"
+  # cm:
+  #   server.session.duration: 24h
   params:
     ## Server properties
     # -- Run server without TLS
