@@ -6,8 +6,7 @@ resources:
 - account.yaml
 - ../../base/crossplane-kubernetes/package/definition.yaml
 - ../../base/crossplane-kubernetes/package/compositions.yaml
-# - ../../base/crossplane-kubernetes/providers/function-kcl.yaml
-- ../../base/crossplane-kubernetes/providers/provider-helm-incluster.yaml
+# - ../../base/crossplane-kubernetes/providers/provider-helm-incluster.yaml
 patches:
   - patch: |-
       $patch: delete
@@ -21,10 +20,10 @@ patches:
       kind: Composition
       metadata:
         name: cluster-google
-  - target:
-      kind: ServiceAccount
-      name: crossplane-provider-helm
-    patch: |-
-      - op: replace
-        path: /metadata/annotations/argocd.argoproj.io~1tracking-id
-        value: crossplane-system-infrastructure:pkg.crossplane.io/ControllerConfig:crossplane-system/crossplane-provider-helm
+  # - target:
+  #     kind: ServiceAccount
+  #     name: crossplane-provider-helm
+  #   patch: |-
+  #     - op: replace
+  #       path: /metadata/annotations/argocd.argoproj.io~1tracking-id
+  #       value: crossplane-system-infrastructure:pkg.crossplane.io/ControllerConfig:crossplane-system/crossplane-provider-helm
