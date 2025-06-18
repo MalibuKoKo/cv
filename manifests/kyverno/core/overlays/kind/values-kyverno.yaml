@@ -4,3 +4,9 @@ admissionController:
 backgroundController:
   replicas: 1
   topologySpreadConstraints: []
+cleanupController:
+  replicas: 1
+  topologySpreadConstraints: []
+reportsController:
+  replicas: 1
+  topologySpreadConstraints: []
