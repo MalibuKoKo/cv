@@ -2,6 +2,7 @@ apiVersion: devopstoolkitseries.com/v1alpha1
 kind: ClusterClaim
 metadata:
   name: demo
+  namespace: crossplane-system
   annotations:
     # crossplane.io/external-name: "controlplane"
     argocd.argoproj.io/tracking-id: crossplane-system-infrastructure:/ClusterClaim:crossplane-system/demo

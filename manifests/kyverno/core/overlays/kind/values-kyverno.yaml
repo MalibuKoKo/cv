@@ -1,0 +1,6 @@
+admissionController:
+  replicas: 1
+  topologySpreadConstraints: []
+backgroundController:
+  replicas: 1
+  topologySpreadConstraints: []

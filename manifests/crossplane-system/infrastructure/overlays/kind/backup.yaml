@@ -1,0 +1,78 @@
+apiVersion: kyverno.io/v2beta1
+kind: ClusterPolicy
+metadata:
+  name: mutate-cluster
+spec:
+  rules:
+  - name: InternetGateway.demo
+    match: {"resources": {"names": ["demo"], "kinds": ["ec2.aws.upbound.io/v1beta1/InternetGateway"]}}
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"crossplane.io/external-name": "igw-02572cb37e1647d45"}}}}
+  - name: MainRouteTableAssociation.demo
+    match: {"resources": {"names": ["demo"], "kinds": ["ec2.aws.upbound.io/v1beta1/MainRouteTableAssociation"]}}
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"crossplane.io/external-name": "rtbassoc-0eda8c1676b47254b"}}}}
+  - name: RouteTableAssociation.demo-eu-west-3a
+    match: {"resources": {"names": ["demo-eu-west-3a"], "kinds": ["ec2.aws.upbound.io/v1beta1/RouteTableAssociation"]}}
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"crossplane.io/external-name": "rtbassoc-072a0de7e5d8e8c83"}}}}
+  - name: RouteTableAssociation.demo-eu-west-3b
+    match: {"resources": {"names": ["demo-eu-west-3b"], "kinds": ["ec2.aws.upbound.io/v1beta1/RouteTableAssociation"]}}
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"crossplane.io/external-name": "rtbassoc-01d8449b0ea9e55ba"}}}}
+  - name: RouteTableAssociation.demo-eu-west-3c
+    match: {"resources": {"names": ["demo-eu-west-3c"], "kinds": ["ec2.aws.upbound.io/v1beta1/RouteTableAssociation"]}}
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"crossplane.io/external-name": "rtbassoc-01f9aa6fa8d2f5c56"}}}}
+  - name: RouteTable.demo
+    match: {"resources": {"names": ["demo"], "kinds": ["ec2.aws.upbound.io/v1beta1/RouteTable"]}}
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"crossplane.io/external-name": "rtb-06818c3e4cb76a950"}}}}
+  - name: Route.demo
+    match: {"resources": {"names": ["demo"], "kinds": ["ec2.aws.upbound.io/v1beta1/Route"]}}
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"crossplane.io/external-name": "r-rtb-06818c3e4cb76a9501080289494"}}}}
+  - name: SecurityGroupRule.demo
+    match: {"resources": {"names": ["demo"], "kinds": ["ec2.aws.upbound.io/v1beta1/SecurityGroupRule"]}}
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"crossplane.io/external-name": "sgrule-480750576"}}}}
+  - name: SecurityGroup.demo
+    match: {"resources": {"names": ["demo"], "kinds": ["ec2.aws.upbound.io/v1beta1/SecurityGroup"]}}
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"crossplane.io/external-name": "sg-004d6a2d39e255bce"}}}}
+  - name: Subnet.demo-eu-west-3a
+    match: {"resources": {"names": ["demo-eu-west-3a"], "kinds": ["ec2.aws.upbound.io/v1beta1/Subnet"]}}
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"crossplane.io/external-name": "subnet-05f52cee1090c0282"}}}}
+  - name: Subnet.demo-eu-west-3b
+    match: {"resources": {"names": ["demo-eu-west-3b"], "kinds": ["ec2.aws.upbound.io/v1beta1/Subnet"]}}
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"crossplane.io/external-name": "subnet-03c8352b31255952e"}}}}
+  - name: Subnet.demo-eu-west-3c
+    match: {"resources": {"names": ["demo-eu-west-3c"], "kinds": ["ec2.aws.upbound.io/v1beta1/Subnet"]}}
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"crossplane.io/external-name": "subnet-06acf6e989af3bc26"}}}}
+  - name: VPC.demo
+    match: {"resources": {"names": ["demo"], "kinds": ["ec2.aws.upbound.io/v1beta1/VPC"]}}
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"crossplane.io/external-name": "vpc-0585bb00fa79e4d52"}}}}
+  - name: Addon.demo-ebs
+    match: {"resources": {"names": ["demo-ebs"], "kinds": ["eks.aws.upbound.io/v1beta1/Addon"]}}
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"crossplane.io/external-name": "demo:aws-ebs-csi-driver"}}}}
+  - name: ClusterAuth.demo
+    match: {"resources": {"names": ["demo"], "kinds": ["eks.aws.upbound.io/v1beta1/ClusterAuth"]}}
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"crossplane.io/external-name": "demo"}}}}
+  - name: Cluster.demo
+    match: {"resources": {"names": ["demo"], "kinds": ["eks.aws.upbound.io/v1beta1/Cluster"]}}
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"crossplane.io/external-name": "demo"}}}}
+  - name: NodeGroup.demo
+    match: {"resources": {"names": ["demo"], "kinds": ["eks.aws.upbound.io/v1beta1/NodeGroup"]}}
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"crossplane.io/external-name": "demo"}}}}
+  - name: RolePolicyAttachment.demo-cni
+    match: {"resources": {"names": ["demo-cni"], "kinds": ["iam.aws.upbound.io/v1beta1/RolePolicyAttachment"]}}
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"crossplane.io/external-name": "demo-nodegroup-2025061820030921490000002f"}}}}
+  - name: RolePolicyAttachment.demo-controlplane
+    match: {"resources": {"names": ["demo-controlplane"], "kinds": ["iam.aws.upbound.io/v1beta1/RolePolicyAttachment"]}}
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"crossplane.io/external-name": "demo-controlplane-2025061820030908640000002c"}}}}
+  - name: RolePolicyAttachment.demo-registry
+    match: {"resources": {"names": ["demo-registry"], "kinds": ["iam.aws.upbound.io/v1beta1/RolePolicyAttachment"]}}
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"crossplane.io/external-name": "demo-nodegroup-2025061820030917130000002e"}}}}
+  - name: RolePolicyAttachment.demo-service
+    match: {"resources": {"names": ["demo-service"], "kinds": ["iam.aws.upbound.io/v1beta1/RolePolicyAttachment"]}}
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"crossplane.io/external-name": "demo-controlplane-2025061820030883980000002b"}}}}
+  - name: RolePolicyAttachment.demo-worker
+    match: {"resources": {"names": ["demo-worker"], "kinds": ["iam.aws.upbound.io/v1beta1/RolePolicyAttachment"]}}
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"crossplane.io/external-name": "demo-nodegroup-2025061820030912450000002d"}}}}
+  - name: Object.demo-ns-dev
+    match: {"resources": {"names": ["demo-ns-dev"], "kinds": ["kubernetes.crossplane.io/v1alpha2/Object"]}}
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"crossplane.io/external-name": "dev"}}}}
+  - name: Object.demo-ns-production
+    match: {"resources": {"names": ["demo-ns-production"], "kinds": ["kubernetes.crossplane.io/v1alpha2/Object"]}}
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"crossplane.io/external-name": "production"}}}}

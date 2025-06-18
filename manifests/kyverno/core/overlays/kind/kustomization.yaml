@@ -1,10 +1,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: metallb-system
-resources:
-- ../../base/kind.yaml
 generators:
-- ../../base/helm-chart.yaml
+- ../../base/helm-chart-kyverno.yaml
+resources:
+- ../../base
 patches:
 - target:
     kind: CustomResourceDefinition
