@@ -36,7 +36,7 @@ yq -o=json e '.' "$TMP_FILE" | jq -c '.[]' | while read -r res; do
   if [[ -n "$external_name" ]]; then
     key="${kind}.${name}"
     echo '  - name: '$key >> "$DATA_FILE"
-    echo '    match: {"resources": {"names": ["'$name'"], "kinds": ["'$apiVersion/$kind'"]}}' >> "$DATA_FILE"
+    echo '    match: {"any": [{"resources": {"names": ["'$name'"], "kinds": ["'$apiVersion/$kind'"]}}]}' >> "$DATA_FILE"
     echo '    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"crossplane.io/external-name": "'$external_name'"}}}}' >> "$DATA_FILE"
   fi
 done
