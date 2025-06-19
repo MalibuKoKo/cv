@@ -242,8 +242,20 @@ spec:
         - resources:
             kinds:
               - eks.aws.upbound.io/*/Cluster
-    preconditions: *preconditions
-    context: *context
+    preconditions: &preconditions
+      all:
+        - *p_status
+        - *p_atProvider
+        - *p_region
+        - *p_id
+        - *p_arn
+    context: &context
+    - *c_region
+    - *c_id
+    - *c_arn
+    - name: ownerId
+      variable:
+        value: "{{arn|regex_replace_all('^arn:aws:[^:]+:[^:]+:([^:]+):[^:]+$',@,'${1}')}}"
     mutate:
       patchStrategicMerge:
         metadata:
