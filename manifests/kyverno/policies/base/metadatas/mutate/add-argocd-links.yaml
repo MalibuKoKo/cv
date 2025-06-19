@@ -221,3 +221,18 @@ spec:
         metadata:
           annotations:
             link.argocd.argoproj.io/vpcs.ec2.aws.upbound.io: "https://{{ownerId}}.{{region}}.console.aws.amazon.com/vpcconsole/home?region={{region}}#VpcDetails:VpcId={{id}}"
+  - name: subnets.ec2.aws.upbound.io
+    skipBackgroundRequests: true
+    match:
+      any:
+        - resources:
+            kinds:
+              - ec2.aws.upbound.io/*/Subnet
+    preconditions: *preconditions
+    context: *context
+    mutate:
+      patchStrategicMerge:
+        metadata:
+          annotations:
+            link.argocd.argoproj.io/subnets.ec2.aws.upbound.io: "https://{{ownerId}}.{{region}}.console.aws.amazon.com/vpcconsole/home?region={{region}}#SubnetDetails:subnetId={{id}}"
+
