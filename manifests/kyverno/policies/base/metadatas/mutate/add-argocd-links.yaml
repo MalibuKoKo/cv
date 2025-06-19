@@ -181,7 +181,6 @@ spec:
       all:
         - *p_status
         - *p_atProvider
-        - *p_arn
         - *p_ownerId
         - *p_region
         - *p_id
@@ -201,18 +200,24 @@ spec:
         - resources:
             kinds:
               - ec2.aws.upbound.io/*/SecurityGroup
-    preconditions: &preconditions
-      all:
-        - *p_status
-        - *p_atProvider
-        - *p_ownerId
-        - *p_region
-    context: &context
-    - *c_ownerId
-    - *c_region
-    - *c_id
+    preconditions: *preconditions
+    context: *context
     mutate:
       patchStrategicMerge:
         metadata:
           annotations:
             link.argocd.argoproj.io/securitygroups.ec2.aws.upbound.io: "https://{{ownerId}}.{{region}}.console.aws.amazon.com/vpcconsole/home?region={{region}}#SecurityGroup:groupId={{id}}"
+  - name: vpcs.ec2.aws.upbound.io
+    skipBackgroundRequests: true
+    match:
+      any:
+        - resources:
+            kinds:
+              - ec2.aws.upbound.io/*/VPC
+    preconditions: *preconditions
+    context: *context
+    mutate:
+      patchStrategicMerge:
+        metadata:
+          annotations:
+            link.argocd.argoproj.io/vpcs.ec2.aws.upbound.io: "https://{{ownerId}}.{{region}}.console.aws.amazon.com/vpcconsole/home?region={{region}}#VpcDetails:VpcId={{id}}"
