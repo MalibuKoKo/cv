@@ -290,8 +290,11 @@ spec:
       name: clusterName
       variable:
         value: *clusterName
+    - name: fixedId
+      variable:
+        value: "{{id|regex_replace_all('^[^:]+:([^:]+)$',@,'${1}')}}"
     mutate:
       patchStrategicMerge:
         metadata:
           annotations:
-            link.argocd.argoproj.io/nodegroups.eks.aws.upbound.io: "https://{{ownerId}}.{{region}}.console.aws.amazon.com/eks/clusters/{{clusterName}}/nodegroups/{{id}}?region={{region}}&selectedTab=cluster-compute-tab"
+            link.argocd.argoproj.io/nodegroups.eks.aws.upbound.io: "https://{{ownerId}}.{{region}}.console.aws.amazon.com/eks/clusters/{{clusterName}}/nodegroups/{{fixedId}}?region={{region}}&selectedTab=cluster-compute-tab"
