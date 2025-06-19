@@ -261,5 +261,37 @@ spec:
         metadata:
           annotations:
             link.argocd.argoproj.io/clusters.eks.aws.upbound.io: "https://{{ownerId}}.{{region}}.console.aws.amazon.com/eks/clusters/{{id}}?region={{region}}"
-
-
+  - name: nodegroups.eks.aws.upbound.io
+    skipBackgroundRequests: true
+    match:
+      any:
+        - resources:
+            kinds:
+              - eks.aws.upbound.io/*/NodeGroup
+    preconditions: &preconditions
+      all:
+        - *p_status
+        - *p_atProvider
+        - *p_region
+        - *p_id
+        - *p_arn
+        - &p_clusterName
+          key: &clusterName "{{ request.object.status.atProvider.clusterName || '' }}"
+          operator: NotEquals
+          value: ""
+    context: &context
+    - *c_region
+    - *c_id
+    - *c_arn
+    - name: ownerId
+      variable:
+        value: "{{arn|regex_replace_all('^arn:aws:[^:]+:[^:]+:([^:]+):[^:]+$',@,'${1}')}}"
+    - &c_clusterName
+      name: clusterName
+      variable:
+        value: *clusterName
+    mutate:
+      patchStrategicMerge:
+        metadata:
+          annotations:
+            link.argocd.argoproj.io/nodegroups.eks.aws.upbound.io: "https://{{ownerId}}.{{region}}.console.aws.amazon.com/eks/clusters/{{clusterName}}/nodegroups/{{id}}?region={{region}}&selectedTab=cluster-compute-tab"
