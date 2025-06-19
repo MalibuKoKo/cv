@@ -1,0 +1,218 @@
+---
+apiVersion: kyverno.io/v2beta1
+kind: ClusterPolicy
+metadata:
+  name: mutate-add-argocd-links
+  annotations:
+    argocd.argoproj.io/sync-options: Replace=true,Force=true,ServerSideApply=true
+  labels:
+    argocd.argoproj.io/instance: kyverno-core
+spec:
+  background: true
+    # Controls if a validation policy rule failure should block the admission review 
+  # request (Enforce) or allow (Audit) the admission review request and report the 
+  # policy failure in a policy report. Defaults to Audit.
+  validationFailureAction: Audit # When all resources audited are compliant, change ths to: Enforce
+  # Defines the API server behavior if the webhook fails to respond. 
+  # Allowed values are “Ignore” or “Fail”. 
+  # Defaults to “Fail”. Additionally, if set to “Ignore” will allow failing calls to image 
+  # registries to be ignored. 
+  # This allows for rule types like verifyImages or others which use image data to not block if 
+  # the registry is temporarily down, useful in situations where images already exist on the nodes.
+  failurePolicy: Ignore
+  rules:
+  # job
+  - name: annote-me
+    skipBackgroundRequests: true
+    match:
+      any:
+      - resources:
+          kinds:
+          - ec2.aws.upbound.io/*/*
+          - eks.aws.upbound.io/*/*
+          - iam.aws.upbound.io/*/*
+          - organizations.aws.upbound.io/*/*
+          operations:
+          - CREATE
+    exclude: &exclude {"any": [{"resources": {"namespaces": ["kyverno"]}}]}
+    generate:
+      apiVersion: batch/v1
+      kind: Job
+      name: "annotate-{{request.object.metadata.name || request.name || request.object.metadata.generateName}}"
+      namespace: kyverno
+      synchronize: false
+      data:
+        apiVersion: batch/v1
+        kind: Job
+        metadata:
+          name: "annotate-{{request.object.metadata.name || request.name || request.object.metadata.generateName}}"
+          namespace: kyverno
+        spec:
+          backoffLimit: 0  # 💡 Pas de retry en cas d’échec
+          ttlSecondsAfterFinished: 5  # 💡 Suppression après 30s (même si failed)
+          template:
+            spec:
+              restartPolicy: Never
+              serviceAccountName: kyverno-background-controller  # 💡 Utilise le SA de Kyverno
+              containers:
+                - name: kubectl
+                  image: "docker.io/alpine/k8s:1.31.0"
+                  imagePullPolicy: IfNotPresent
+                  command:
+                    - "/bin/sh"
+                    - "-c"
+                    - |
+                      sleep 10
+                      kubectl annotate {{ request.object.kind | to_string(@) | to_lower(@) }} {{request.object.metadata.name || request.name || request.object.metadata.generateName}} \
+                        aldebaran.com/mutate-requested=true --overwrite -n {{request.namespace}}
+  # kind=ingress && kubectl annotate $kind --all kyverno.io/mutate-requested=true --all-namespaces && kubectl annotate $kind --all kyverno.io/mutate-requested-     --all-namespaces
+  - name: ingress.networking.k8s.io
+    skipBackgroundRequests: true
+    match: {"any": [{"resources": {"kinds": ["networking.k8s.io/*/Ingress"]}}]}
+    exclude: *exclude
+    context: &context [{"name": "grafanaHost", "apiCall": {"method": "GET", "urlPath": "/apis/networking.k8s.io/v1/namespaces/monitoring/ingresses/kube-prometheus-stack-grafana", "jmesPath": "spec.rules[0].host"}}]
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"link.argocd.argoproj.io/grafana": "https://{{ grafanaHost }}/d/k8s-nginx-ingress-prometheus-ng/kubernetes-nginx-ingress-prometheus-nextgen?var-ingress={{request.object.metadata.name || request.name || request.object.metadata.generateName}}"}}}}
+  # kind=pvc && kubectl annotate $kind --all kyverno.io/mutate-requested=true --all-namespaces && kubectl annotate $kind --all kyverno.io/mutate-requested-     --all-namespaces
+  - name: pvc
+    skipBackgroundRequests: true
+    match: {"any": [{"resources": {"kinds": ["PersistentVolumeClaim"]}}]}
+    exclude: *exclude
+    context: *context
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"link.argocd.argoproj.io/grafana": "https://{{ grafanaHost }}/d/919b92a8e8041bd567af9edab12c840c/kubernetes-persistent-volumes?var-namespace={{request.namespace}}&var-volume={{request.object.metadata.name || request.name || request.object.metadata.generateName}}"}}}}
+  # kind=hosts.getambassador.io && kubectl annotate $kind --all kyverno.io/mutate-requested=true --all-namespaces && kubectl annotate $kind --all kyverno.io/mutate-requested-     --all-namespaces
+  - name: hosts.getambassador.io
+    skipBackgroundRequests: true
+    match: {"any": [{"resources": {"kinds": ["getambassador.io/*/Host"]}}]}
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"link.argocd.argoproj.io/getambassador.host": "https://{{request.object.spec.hostname}}"}}}}
+  # kind=mapping.getambassador.io && kubectl annotate $kind --all kyverno.io/mutate-requested=true --all-namespaces && kubectl annotate $kind --all kyverno.io/mutate-requested-     --all-namespaces
+  - name: mappings.getambassador.io
+    skipBackgroundRequests: true
+    match: {"any": [{"resources": {"kinds": ["getambassador.io/*/Mapping"]}}]}
+    context: *context
+    mutate: {"patchStrategicMerge": {"metadata": {"annotations": {"link.argocd.argoproj.io/grafana.ambassador": "https://{{ grafanaHost }}/d/AJieHz4Mz/ambassador-edge-stack?from=now-15m&to=now&timezone=browser&refresh=10s"}}}}
+  - name: sa
+    skipBackgroundRequests: true
+    match:
+      any:
+        - resources:
+            kinds:
+              - ServiceAccount
+            annotations:
+              eks.amazonaws.com/role-arn: "*?"
+    exclude: *exclude
+    context:
+    - name: role
+      variable:
+        value: "{{request.object.metadata.annotations.\"eks.amazonaws.com/role-arn\"|regex_replace_all('.*/([^/]+)$',@,'${1}')}}"
+    - name: account_id
+      variable:
+        value: "{{request.object.metadata.annotations.\"eks.amazonaws.com/role-arn\"|regex_replace_all('^arn:aws:[^:]+:[^:]*:(\\d+):.*$',@,'${1}')}}"
+    mutate:
+      patchStrategicMerge:
+        metadata:
+          annotations:
+            link.argocd.argoproj.io/roles.iam.services.k8s.aws: "https://{{account_id}}.us-east-1.console.aws.amazon.com/iam/home?#/roles/details/{{role}}"
+  ####################################################################################################
+  # Règles pour les ressources EC2 (InternetGateway)
+  ####################################################################################################
+  - name: internetgateways.ec2.aws.upbound.io
+    skipBackgroundRequests: true
+    match:
+      any:
+        - resources:
+            kinds:
+              - ec2.aws.upbound.io/*/InternetGateway
+    preconditions: &preconditionsARN
+      all:
+        - &p_status
+          key: "{{ request.object.status || `{}` }}"
+          operator: NotEquals
+          value: "`{}`"
+        - &p_atProvider
+          key: "{{ request.object.status.atProvider || `{}` }}"
+          operator: NotEquals
+          value: "`{}`"
+        - &p_arn
+          key: &arn "{{ request.object.status.atProvider.arn || '' }}"
+          operator: NotEquals
+          value: ""
+        - &p_ownerId
+          key: &ownerId "{{ request.object.status.atProvider.ownerId || '' }}"
+          operator: NotEquals
+          value: ""
+        - &p_region
+          key: &region "{{ request.object.spec.forProvider.region || '' }}"
+          operator: NotEquals
+          value: ""
+        - &p_id
+          key: &id "{{ request.object.status.atProvider.id || '' }}"
+          operator: NotEquals
+          value: ""
+    context:
+    - &c_arn
+      name: arn
+      variable:
+        value: *arn
+    - &c_ownerId
+      name: ownerId
+      variable:
+        value: *ownerId
+    - &c_region
+      name: region
+      variable:
+        value: *region
+    - &c_id
+      name: id
+      variable:
+        value: *id
+    mutate:
+      patchStrategicMerge:
+        metadata:
+          annotations:
+            link.argocd.argoproj.io/internetgateways.ec2.aws.upbound.io: "https://{{ownerId}}.{{region}}.console.aws.amazon.com/vpcconsole/home?region={{region}}#InternetGateway:internetGatewayId={{id}}"
+  - name: routetables.ec2.aws.upbound.io
+    skipBackgroundRequests: true
+    match:
+      any:
+        - resources:
+            kinds:
+              - ec2.aws.upbound.io/*/RouteTable
+    preconditions: &preconditions
+      all:
+        - *p_status
+        - *p_atProvider
+        - *p_arn
+        - *p_ownerId
+        - *p_region
+        - *p_id
+    context: &context
+    - *c_ownerId
+    - *c_region
+    - *c_id
+    mutate:
+      patchStrategicMerge:
+        metadata:
+          annotations:
+            link.argocd.argoproj.io/routetables.ec2.aws.upbound.io: "https://{{ownerId}}.{{region}}.console.aws.amazon.com/vpcconsole/home?region={{region}}#RouteTableDetails:RouteTableId={{id}}"
+  - name: securitygroups.ec2.aws.upbound.io
+    skipBackgroundRequests: true
+    match:
+      any:
+        - resources:
+            kinds:
+              - ec2.aws.upbound.io/*/SecurityGroup
+    preconditions: &preconditions
+      all:
+        - *p_status
+        - *p_atProvider
+        - *p_ownerId
+        - *p_region
+    context: &context
+    - *c_ownerId
+    - *c_region
+    - *c_id
+    mutate:
+      patchStrategicMerge:
+        metadata:
+          annotations:
+            link.argocd.argoproj.io/securitygroups.ec2.aws.upbound.io: "https://{{ownerId}}.{{region}}.console.aws.amazon.com/vpcconsole/home?region={{region}}#SecurityGroup:groupId={{id}}"

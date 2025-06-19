@@ -1,0 +1,196 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: kyverno-mutate-trigger
+  labels:
+    argocd.argoproj.io/instance: kyverno-core
+spec:
+  suspend: false
+  schedule: "0 6,9,12,15,18,21 * * 1-5"  # du lundi au vendredi, six fois par jour
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: kyverno-background-controller # Remplace par un SA avec les permissions nécessaires
+          containers:
+          - name: kyverno-mutate
+            image: docker.io/alpine/k8s:1.31.0
+            imagePullPolicy: IfNotPresent
+            command:
+              - /bin/sh
+              - -c
+              - |
+                set -x
+                kubectl get ns -o yaml | yq '.items[].metadata.name' | grep -Ev '^(services|kyverno)$' | while read -r ns; do kubectl annotate pod --all kyverno.io/mutate-requested=true -n $ns && kubectl annotate pod --all kyverno.io/mutate-requested- -n $ns; done
+                for kind in \
+                  authservices.getambassador.io \
+                  consulresolvers.getambassador.io \
+                  devportals.getambassador.io \
+                  envoyfilterpolicies.getambassador.io \
+                  envoyfilters.getambassador.io \
+                  filterpolicies.gateway.getambassador.io \
+                  filterpolicies.getambassador.io \
+                  filters.gateway.getambassador.io \
+                  filters.getambassador.io \
+                  hosts.getambassador.io \
+                  kubernetesendpointresolvers.getambassador.io \
+                  kubernetesserviceresolvers.getambassador.io \
+                  listeners.getambassador.io \
+                  logservices.getambassador.io \
+                  mappings.getambassador.io \
+                  modules.getambassador.io \
+                  ratelimits.getambassador.io \
+                  ratelimitservices.getambassador.io \
+                  tcpmappings.getambassador.io \
+                  tlscontexts.getambassador.io \
+                  tracingservices.getambassador.io \
+                  webapplicationfirewallpolicies.gateway.getambassador.io \
+                  webapplicationfirewalls.gateway.getambassador.io \
+                  ingress \
+                  pod \
+                  pvc \
+                  sa \
+                  amicopies.ec2.aws.upbound.io \
+                  amilaunchpermissions.ec2.aws.upbound.io \
+                  amis.ec2.aws.upbound.io \
+                  availabilityzonegroups.ec2.aws.upbound.io \
+                  capacityreservations.ec2.aws.upbound.io \
+                  carriergateways.ec2.aws.upbound.io \
+                  customergateways.ec2.aws.upbound.io \
+                  defaultnetworkacls.ec2.aws.upbound.io \
+                  defaultroutetables.ec2.aws.upbound.io \
+                  defaultsecuritygroups.ec2.aws.upbound.io \
+                  defaultsubnets.ec2.aws.upbound.io \
+                  defaultvpcdhcpoptions.ec2.aws.upbound.io \
+                  defaultvpcs.ec2.aws.upbound.io \
+                  ebsdefaultkmskeys.ec2.aws.upbound.io \
+                  ebsencryptionbydefaults.ec2.aws.upbound.io \
+                  ebssnapshotcopies.ec2.aws.upbound.io \
+                  ebssnapshotimports.ec2.aws.upbound.io \
+                  ebssnapshots.ec2.aws.upbound.io \
+                  ebsvolumes.ec2.aws.upbound.io \
+                  egressonlyinternetgateways.ec2.aws.upbound.io \
+                  eipassociations.ec2.aws.upbound.io \
+                  eips.ec2.aws.upbound.io \
+                  fleets.ec2.aws.upbound.io \
+                  flowlogs.ec2.aws.upbound.io \
+                  hosts.ec2.aws.upbound.io \
+                  instances.ec2.aws.upbound.io \
+                  instancestates.ec2.aws.upbound.io \
+                  internetgateways.ec2.aws.upbound.io \
+                  keypairs.ec2.aws.upbound.io \
+                  launchtemplates.ec2.aws.upbound.io \
+                  mainroutetableassociations.ec2.aws.upbound.io \
+                  managedprefixlistentries.ec2.aws.upbound.io \
+                  managedprefixlists.ec2.aws.upbound.io \
+                  natgateways.ec2.aws.upbound.io \
+                  networkaclrules.ec2.aws.upbound.io \
+                  networkacls.ec2.aws.upbound.io \
+                  networkinsightsanalyses.ec2.aws.upbound.io \
+                  networkinsightspaths.ec2.aws.upbound.io \
+                  networkinterfaceattachments.ec2.aws.upbound.io \
+                  networkinterfaces.ec2.aws.upbound.io \
+                  networkinterfacesgattachments.ec2.aws.upbound.io \
+                  placementgroups.ec2.aws.upbound.io \
+                  routes.ec2.aws.upbound.io \
+                  routetableassociations.ec2.aws.upbound.io \
+                  routetables.ec2.aws.upbound.io \
+                  securitygroupegressrules.ec2.aws.upbound.io \
+                  securitygroupingressrules.ec2.aws.upbound.io \
+                  securitygrouprules.ec2.aws.upbound.io \
+                  securitygroups.ec2.aws.upbound.io \
+                  serialconsoleaccesses.ec2.aws.upbound.io \
+                  snapshotcreatevolumepermissions.ec2.aws.upbound.io \
+                  spotdatafeedsubscriptions.ec2.aws.upbound.io \
+                  spotfleetrequests.ec2.aws.upbound.io \
+                  spotinstancerequests.ec2.aws.upbound.io \
+                  subnetcidrreservations.ec2.aws.upbound.io \
+                  subnets.ec2.aws.upbound.io \
+                  tags.ec2.aws.upbound.io \
+                  trafficmirrorfilterrules.ec2.aws.upbound.io \
+                  trafficmirrorfilters.ec2.aws.upbound.io \
+                  transitgatewayconnectpeers.ec2.aws.upbound.io \
+                  transitgatewayconnects.ec2.aws.upbound.io \
+                  transitgatewaymulticastdomainassociations.ec2.aws.upbound.io \
+                  transitgatewaymulticastdomains.ec2.aws.upbound.io \
+                  transitgatewaymulticastgroupmembers.ec2.aws.upbound.io \
+                  transitgatewaymulticastgroupsources.ec2.aws.upbound.io \
+                  transitgatewaypeeringattachmentaccepters.ec2.aws.upbound.io \
+                  transitgatewaypeeringattachments.ec2.aws.upbound.io \
+                  transitgatewaypolicytables.ec2.aws.upbound.io \
+                  transitgatewayprefixlistreferences.ec2.aws.upbound.io \
+                  transitgatewayroutes.ec2.aws.upbound.io \
+                  transitgatewayroutetableassociations.ec2.aws.upbound.io \
+                  transitgatewayroutetablepropagations.ec2.aws.upbound.io \
+                  transitgatewayroutetables.ec2.aws.upbound.io \
+                  transitgateways.ec2.aws.upbound.io \
+                  transitgatewayvpcattachmentaccepters.ec2.aws.upbound.io \
+                  transitgatewayvpcattachments.ec2.aws.upbound.io \
+                  volumeattachments.ec2.aws.upbound.io \
+                  vpcdhcpoptions.ec2.aws.upbound.io \
+                  vpcdhcpoptionsassociations.ec2.aws.upbound.io \
+                  vpcendpointconnectionnotifications.ec2.aws.upbound.io \
+                  vpcendpointroutetableassociations.ec2.aws.upbound.io \
+                  vpcendpoints.ec2.aws.upbound.io \
+                  vpcendpointsecuritygroupassociations.ec2.aws.upbound.io \
+                  vpcendpointserviceallowedprincipals.ec2.aws.upbound.io \
+                  vpcendpointservices.ec2.aws.upbound.io \
+                  vpcendpointsubnetassociations.ec2.aws.upbound.io \
+                  vpcipampoolcidrallocations.ec2.aws.upbound.io \
+                  vpcipampoolcidrs.ec2.aws.upbound.io \
+                  vpcipampools.ec2.aws.upbound.io \
+                  vpcipams.ec2.aws.upbound.io \
+                  vpcipamscopes.ec2.aws.upbound.io \
+                  vpcipv4cidrblockassociations.ec2.aws.upbound.io \
+                  vpcpeeringconnectionaccepters.ec2.aws.upbound.io \
+                  vpcpeeringconnectionoptions.ec2.aws.upbound.io \
+                  vpcpeeringconnections.ec2.aws.upbound.io \
+                  vpcs.ec2.aws.upbound.io \
+                  vpnconnectionroutes.ec2.aws.upbound.io \
+                  vpnconnections.ec2.aws.upbound.io \
+                  vpngatewayattachments.ec2.aws.upbound.io \
+                  vpngatewayroutepropagations.ec2.aws.upbound.io \
+                  vpngateways.ec2.aws.upbound.io \
+                  accessentries.eks.aws.upbound.io \
+                  accesspolicyassociations.eks.aws.upbound.io \
+                  addons.eks.aws.upbound.io \
+                  clusterauths.eks.aws.upbound.io \
+                  clusters.eks.aws.upbound.io \
+                  fargateprofiles.eks.aws.upbound.io \
+                  identityproviderconfigs.eks.aws.upbound.io \
+                  nodegroups.eks.aws.upbound.io \
+                  podidentityassociations.eks.aws.upbound.io \
+                  accesskeys.iam.aws.upbound.io \
+                  accountaliases.iam.aws.upbound.io \
+                  accountpasswordpolicies.iam.aws.upbound.io \
+                  groupmemberships.iam.aws.upbound.io \
+                  grouppolicyattachments.iam.aws.upbound.io \
+                  groups.iam.aws.upbound.io \
+                  instanceprofiles.iam.aws.upbound.io \
+                  openidconnectproviders.iam.aws.upbound.io \
+                  policies.iam.aws.upbound.io \
+                  rolepolicies.iam.aws.upbound.io \
+                  rolepolicyattachments.iam.aws.upbound.io \
+                  roles.iam.aws.upbound.io \
+                  samlproviders.iam.aws.upbound.io \
+                  servercertificates.iam.aws.upbound.io \
+                  servicelinkedroles.iam.aws.upbound.io \
+                  servicespecificcredentials.iam.aws.upbound.io \
+                  signingcertificates.iam.aws.upbound.io \
+                  usergroupmemberships.iam.aws.upbound.io \
+                  userloginprofiles.iam.aws.upbound.io \
+                  userpolicyattachments.iam.aws.upbound.io \
+                  users.iam.aws.upbound.io \
+                  usersshkeys.iam.aws.upbound.io \
+                  virtualmfadevices.iam.aws.upbound.io \
+                  accounts.organizations.aws.upbound.io \
+                  delegatedadministrators.organizations.aws.upbound.io \
+                  organizationalunits.organizations.aws.upbound.io \
+                  organizations.organizations.aws.upbound.io \
+                  policies.organizations.aws.upbound.io \
+                  policyattachments.organizations.aws.upbound.io; do
+                  kubectl annotate $kind --all kyverno.io/mutate-requested=true --all-namespaces
+                  kubectl annotate $kind --all kyverno.io/mutate-requested-     --all-namespaces
+                done
+          restartPolicy: Never

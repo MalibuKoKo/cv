@@ -1,0 +1,20 @@
+---
+# For more info https://kyverno.io/policies/pod-security.
+# Refer to https://github.com/kyverno/policies/tree/main/pod-security
+# Baseline: Minimally restrictive policy which prevents known privilege escalations. Allows the default (minimally specified) Pod configuration.
+# Restricted: Heavily restricted policy, following current Pod hardening best practices.
+podSecurityStandard: Baseline
+
+# -- Pod Security Standard (`low`, `medium`, `high`).
+podSecuritySeverity: low
+
+# -- API server behavior if the webhook fails to respond ('Ignore', 'Fail')
+# For more info: https://kyverno.io/docs/writing-policies/policy-settings/
+failurePolicy: Ignore
+
+# -- Validation failure action (`Audit`, `Enforce`).
+# For more info https://kyverno.io/docs/writing-policies/validate.
+validationFailureAction: Audit
+
+# -- Policies background mode
+background: false
