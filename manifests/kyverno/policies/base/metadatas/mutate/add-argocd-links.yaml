@@ -241,7 +241,7 @@ spec:
       any:
         - resources:
             kinds:
-              - ec2.aws.upbound.io/*/Cluster
+              - eks.aws.upbound.io/*/Cluster
     preconditions: *preconditions
     context: *context
     mutate:
