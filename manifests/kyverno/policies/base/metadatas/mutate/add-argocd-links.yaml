@@ -248,6 +248,6 @@ spec:
       patchStrategicMerge:
         metadata:
           annotations:
-            link.argocd.argoproj.io/clusters.eks.aws.upbound.io: "https://{{ownerId}}.{{region}}.console.aws.amazon.com/vpcconsole/home?region={{region}}#SubnetDetails:subnetId={{id}}"
+            link.argocd.argoproj.io/clusters.eks.aws.upbound.io: "https://{{ownerId}}.{{region}}.console.aws.amazon.com/eks/clusters/{{id}}?region={{region}}"
 
 
