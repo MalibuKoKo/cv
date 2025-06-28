@@ -35,8 +35,14 @@ spec:
     usage:
       enabled: true
     version: "1.30"
-    region: eu-west-3
-    zones: 
-    - eu-west-3a
-    - eu-west-3b
-    - eu-west-3c
+    vpcConfig:
+      region:
+        name: eu-west-3
+        cidr: 10.0.0.0/16
+      zones:
+      - name: eu-west-3a
+        cidr: 10.0.0.0/24
+      - name: eu-west-3b
+        cidr: 10.0.1.0/24
+      - name: eu-west-3c
+        cidr: 10.0.2.0/24
