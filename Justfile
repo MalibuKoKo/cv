@@ -24,7 +24,7 @@ start:
   hostctl list domains demo edge.infra.lan   --out json | jq -e '.[] | select(.IP == "172.40.255.206" and .Status == "on")' || sudo $DEVBOX_PACKAGES_DIR/bin/hostctl add domains demo edge.infra.lan   --ip 172.40.255.206
   mkcert -install
   [ -f manifests/ingress-nginx/core/overlays/kind/tls/tls.crt ] || mkcert -cert-file manifests/ingress-nginx/core/overlays/kind/tls/tls.crt -key-file manifests/ingress-nginx/core/overlays/kind/tls/tls.key apps.io '*.apps.io' 172.40.255.205
-  [ -f manifests/ambassador/core/overlays/kind/tls/tls.crt    ] || mkcert -cert-file manifests/ambassador/core/overlays/kind/tls/tls.crt -key-file manifests/ambassador/core/overlays/kind/tls/tls.key infra.lan '*.infra.lan' 172.40.255.206
+  [ -f manifests/ambassador/core/overlays/kind_/tls/tls.crt    ] || mkcert -cert-file manifests/ambassador/core/overlays/kind_/tls/tls.crt -key-file manifests/ambassador/core/overlays/kind_/tls/tls.key infra.lan '*.infra.lan' 172.40.255.206
   docker network inspect kind || docker network create --subnet=172.40.0.0/16 kind
   if [[ $(cat /proc/sys/fs/inotify/max_user_watches) -ne 1048576 ]]; then sudo sysctl fs.inotify.max_user_watches=1048576; fi
   if [[ $(cat /proc/sys/fs/inotify/max_user_instances) -ne 8192  ]]; then sudo sysctl fs.inotify.max_user_instances=8192;  fi

@@ -1,5 +1,5 @@
 global:
-  domain: edge.infra.lan
+  domain: argocd.apps.io #edge.infra.lan
   logging:
     # -- Set the global logging level. One of: `debug`, `info`, `warn` or `error`
     level: debug
@@ -14,15 +14,15 @@ configs:
     # -- Run server without TLS
     ## NOTE: This value should be set when you generate params by other means as it changes ports used by ingress template.
     server.insecure: true
-    # -- Value for base href in index.html. Used if Argo CD is running behind reverse proxy under subpath different from /
-    server.basehref: &path /argo-cd
-    # -- Used if Argo CD is running behind reverse proxy under subpath different from /
-    server.rootpath: *path
+    # # -- Value for base href in index.html. Used if Argo CD is running behind reverse proxy under subpath different from /
+    # server.basehref: &path /argo-cd
+    # # -- Used if Argo CD is running behind reverse proxy under subpath different from /
+    # server.rootpath: *path
 server:
   ingress:
     enabled: true
     tls: true
     ingressClassName: nginx
-    path: *path
+    # path: *path
     annotations:
       nginx.ingress.kubernetes.io/proxy-buffer-size: "256k"
