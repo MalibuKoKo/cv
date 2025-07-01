@@ -49,7 +49,7 @@ kubectl --context ${kube_context} -n ${ns} rollout restart deployment/argocd-app
 #############################################################################################
 # Print informations
 #############################################################################################
-# host=$(kubectl --context ${kube_context} -n ${ns} get ingress argocd-server -ojsonpath='{.spec.rules[0].host}')
-# echo -e "\e[1m\e[32mhttp://${host}\e[0m" >&2
-echo -e "\e[1m\e[32mhttps://edge.infra.lan/argo-cd\e[0m" >&2
+host=$(kubectl --context ${kube_context} -n ${ns} get ingress argocd-server -ojsonpath='{.spec.rules[0].host}')
+echo -e "\e[1m\e[32mhttp://${host}\e[0m" >&2
+# echo -e "\e[1m\e[32mhttps://edge.infra.lan/argo-cd\e[0m" >&2
 echo -e "\e[1m\e[32mkubectl --context ${kube_context} -n ${ns} get secrets/argocd-initial-admin-secret -o jsonpath=\"{.data.password}\" | base64 -d \e[0m" >&2
