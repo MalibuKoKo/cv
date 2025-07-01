@@ -1,15 +1,15 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: ingress-nginx
-# generators:
-# - ../../base/helm-chart.yaml
-# secretGenerator:
-# - name: default-cert
-#   namespace: ingress-nginx
-#   type: kubernetes.io/tls
-#   files:
-#     - tls/tls.crt
-#     - tls/tls.key
-#     - ca/ca.crt
-#   options:
-#     disableNameSuffixHash: true
+generators:
+- ../../base/helm-chart.yaml
+secretGenerator:
+- name: default-cert
+  namespace: ingress-nginx
+  type: kubernetes.io/tls
+  files:
+    - tls/tls.crt
+    - tls/tls.key
+    - ca/ca.crt
+  options:
+    disableNameSuffixHash: true
