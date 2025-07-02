@@ -4,6 +4,7 @@ namespace: crossplane-system
 resources:
 - function-auto-ready.yaml
 - function-kcl.yaml
+- karpenter.yaml
 # - function-sequencer.yaml
 # - function-go-templating.yaml
 # - function-patch-and-transform.yaml 
