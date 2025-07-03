@@ -1,6 +1,6 @@
 apiVersion: pkg.crossplane.io/v1beta1
 kind: Function
 metadata:
-  name: upbound-configuration-aws-eks-karpenter_xkarpenter
+  name: upbound-configuration-aws-eks-karpenter
 spec:
   package: xpkg.upbound.io/upbound/configuration-aws-eks-karpenter_xkarpenter:v0.7.0
