@@ -29,7 +29,7 @@ start:
   if [[ $(cat /proc/sys/fs/inotify/max_user_watches) -ne 1048576 ]]; then sudo sysctl fs.inotify.max_user_watches=1048576; fi
   if [[ $(cat /proc/sys/fs/inotify/max_user_instances) -ne 8192  ]]; then sudo sysctl fs.inotify.max_user_instances=8192;  fi
   kind get clusters | grep -q "^demo$" || kind create cluster --name demo --config bootstrap/overlays/kind/config.yaml
-  kubectl config get-clusters | grep -q "^kind-demo$" || kind export kubeconfig --name demo
+  kind export kubeconfig --name demo
   kubectl config use-context kind-demo > /dev/null 2>&1
   bootstrap/overlays/kind/start.sh
   bootstrap/overlays/kind/creds.sh
