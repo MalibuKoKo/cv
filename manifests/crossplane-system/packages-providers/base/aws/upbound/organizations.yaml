@@ -3,4 +3,4 @@ kind: Provider
 metadata:
   name: upbound-provider-aws-organizations
 spec:
-  package: xpkg.upbound.io/upbound/provider-aws-organizations:v1.22.0
+  package: xpkg.upbound.io/upbound/provider-aws-organizations:v1.23.1
