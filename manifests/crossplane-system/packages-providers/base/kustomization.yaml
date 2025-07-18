@@ -6,7 +6,7 @@ resources:
 - aws/upbound/ec2.yaml
 - aws/upbound/eks.yaml
 - aws/upbound/iam.yaml
-- aws/upbound/organizations.yaml
+# - aws/upbound/organizations.yaml
 - helm.yaml
 - kubernetes.yaml
 patches:
