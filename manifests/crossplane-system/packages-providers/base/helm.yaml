@@ -1,28 +1,28 @@
 apiVersion: pkg.crossplane.io/v1
 kind: Provider
 metadata:
-  name: crossplane-provider-helm
+  name: upbound-provider-helm
 spec:
-  package: xpkg.crossplane.io/crossplane-contrib/provider-helm:v0.21.0
-  controllerConfigRef:
-    name: crossplane-provider-helm
----
-apiVersion: pkg.crossplane.io/v1alpha1
-kind: ControllerConfig
-metadata:
-  name: crossplane-provider-helm
-spec:
-  serviceAccountName: crossplane-provider-helm
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: crossplane-provider-helm
-subjects:
-- kind: ServiceAccount
-  name: crossplane-provider-helm
-  namespace: crossplane-system
-roleRef:
-  kind: ClusterRole
-  name: cluster-admin
-  apiGroup: rbac.authorization.k8s.io
+  package: xpkg.upbound.io/upbound/provider-helm:v0.21.1
+  # controllerConfigRef:
+  #   name: crossplane-provider-helm
+# ---
+# apiVersion: pkg.crossplane.io/v1alpha1
+# kind: ControllerConfig
+# metadata:
+#   name: crossplane-provider-helm
+# spec:
+#   serviceAccountName: crossplane-provider-helm
+# ---
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: ClusterRoleBinding
+# metadata:
+#   name: crossplane-provider-helm
+# subjects:
+# - kind: ServiceAccount
+#   name: crossplane-provider-helm
+#   namespace: crossplane-system
+# roleRef:
+#   kind: ClusterRole
+#   name: cluster-admin
+#   apiGroup: rbac.authorization.k8s.io
