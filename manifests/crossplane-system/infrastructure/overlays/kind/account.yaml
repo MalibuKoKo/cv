@@ -6,7 +6,6 @@ metadata:
     crossplane.io/external-name: '322872274774'
     # crossplane.io/paused: "true"
 spec:
-  observeOnly: true
   forProvider:
     region: eu-west-3
     email: "aws-demo-176432.compacted698@passinbox.com"
@@ -21,7 +20,6 @@ kind: ProviderConfig
 metadata:
   name: demo
 spec:
-  observeOnly: true
   # same as default's ProviderConfig
   credentials:
     source: Secret
