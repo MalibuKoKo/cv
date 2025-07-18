@@ -8,6 +8,7 @@ metadata:
     argocd.argoproj.io/compare-options: IgnoreExtraneous
     argocd.argoproj.io/sync-options: Prune=false
 spec:
+  observeOnly: true
   deletionPolicy: Delete # Orphan
   forProvider:
     featureSet: ALL
