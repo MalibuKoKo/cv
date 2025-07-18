@@ -1,6 +1,0 @@
-apiVersion: pkg.crossplane.io/v1
-kind: Provider
-metadata:
-  name: crossplane-contrib-provider-aws-organizations
-spec:
-  package: xpkg.crossplane.io/crossplane-contrib/provider-aws-organizations:v1.23.0 # https://github.com/crossplane-contrib/provider-upjet-aws/pkgs/container/provider-aws-organizations
