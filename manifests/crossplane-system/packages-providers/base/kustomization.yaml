@@ -3,10 +3,12 @@ kind: Kustomization
 namespace: crossplane-system
 resources:
 - aws/account.yaml
+- aws/cloudwatchevents.yaml
 - aws/ec2.yaml
 - aws/eks.yaml
 - aws/iam.yaml
 - aws/organizations.yaml
+- aws/sqs.yaml
 - helm.yaml
 - kubernetes.yaml
 patches:
