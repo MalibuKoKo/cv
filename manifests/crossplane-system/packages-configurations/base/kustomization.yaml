@@ -4,3 +4,4 @@ namespace: crossplane-system
 resources: #[]
 # - devops-toolkit/dot-kubernetes.yaml
 - karpenter.yaml
+- aws-eks-pod-identity.yaml
