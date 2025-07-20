@@ -4,21 +4,21 @@ namespace: crossplane-system
 resources:
 - root/organization.yaml
 - account.yaml
-# - ../../base/crossplane-kubernetes/package/definition.yaml
-# - ../../base/crossplane-kubernetes/package/compositions.yaml
-# patches:
-#   - patch: |-
-#       $patch: delete
-#       apiVersion: apiextensions.crossplane.io/v1
-#       kind: Composition
-#       metadata:
-#         name: cluster-azure
-#   - patch: |-
-#       $patch: delete
-#       apiVersion: apiextensions.crossplane.io/v1
-#       kind: Composition
-#       metadata:
-#         name: cluster-google
+- ../../base/crossplane-kubernetes/package/definition.yaml
+- ../../base/crossplane-kubernetes/package/compositions.yaml
+patches:
+  - patch: |-
+      $patch: delete
+      apiVersion: apiextensions.crossplane.io/v1
+      kind: Composition
+      metadata:
+        name: cluster-azure
+  - patch: |-
+      $patch: delete
+      apiVersion: apiextensions.crossplane.io/v1
+      kind: Composition
+      metadata:
+        name: cluster-google
   # - target:
   #     kind: ServiceAccount
   #     name: crossplane-provider-helm
